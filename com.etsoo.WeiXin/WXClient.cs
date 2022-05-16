@@ -12,7 +12,7 @@ namespace com.etsoo.WeiXin
     /// WeiXin Client
     /// 微信客户端
     /// </summary>
-    public class WXClient : HttpClientService
+    public class WXClient : HttpClientService, IWXClient
     {
         /// <summary>
         /// Api base uri
