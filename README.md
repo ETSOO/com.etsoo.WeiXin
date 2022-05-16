@@ -1,5 +1,5 @@
 # com.etsoo.Weixin
-**微信服务器端接口C#支持**
+**WeiXin serverside APIs support / 微信服务器端接口支持**
 
 ## Installing / 安装
 
