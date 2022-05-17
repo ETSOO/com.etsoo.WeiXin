@@ -14,15 +14,7 @@ namespace com.etsoo.WeiXin
         /// </summary>
         /// <param name="url">Url without #</param>
         /// <returns>Result</returns>
-        ValueTask<WXJsApiSignatureResult> CreateJsApiSignature(string url);
-
-        /// <summary>
-        /// Get Access Token
-        /// 获取访问凭据
-        /// </summary>
-        /// <returns>Result</returns>
-        /// <exception cref="WXClientException"></exception>
-        ValueTask<string> GetAcessTokenAsync();
+        ValueTask<WXJsApiSignatureResult> CreateJsApiSignatureAsync(string url);
 
         /// <summary>
         /// Create Js Card API signature
@@ -33,7 +25,15 @@ namespace com.etsoo.WeiXin
         /// <param name="balance">Balance / 红包类型卡券，指定金额</param>
         /// <param name="openid">Open id / 指定领取者的openid，只有该用户能领取。bind_openid字段为true的卡券必须填写，bind_openid字段为false不必填写。</param>
         /// <returns>Result</returns>
-        ValueTask<WXJsCardApiSignatureResult> CreateJsCardApiSignature(string cardId, string? code = null, decimal? balance = null, string? openid = null);
+        ValueTask<WXJsCardApiSignatureResult> CreateJsCardApiSignatureAsync(string cardId, string? code = null, decimal? balance = null, string? openid = null);
+
+        /// <summary>
+        /// Get Access Token
+        /// 获取访问凭据
+        /// </summary>
+        /// <returns>Result</returns>
+        /// <exception cref="WXClientException"></exception>
+        ValueTask<string> GetAcessTokenAsync();
 
         /// <summary>
         /// Get Js API ticket
