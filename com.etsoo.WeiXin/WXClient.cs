@@ -39,6 +39,13 @@ namespace com.etsoo.WeiXin
         private static string? JsApiTicket;
         private static DateTime? JsApiTicketExpired;
 
+        /// <summary>
+        /// The globally unique ticket for Js API Card call
+        /// Js API卡券调用的全局唯一票据
+        /// https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/JS-SDK.html#4
+        /// </summary>
+        private static string? JsApiCardTicket;
+        private static DateTime? JsApiCardTicketExpired;
 
         /// <summary>
         /// App id
@@ -117,6 +124,50 @@ namespace com.etsoo.WeiXin
         }
 
         /// <summary>
+        /// Create Js Card API signature
+        /// 创建 Js 卡券接口签名
+        /// </summary>
+        /// <param name="cardId">Card id / 卡券ID</param>
+        /// <param name="code">Code / 指定的卡券code码，只能被领一次。自定义code模式的卡券必须填写，非自定义code和预存code模式的卡券不必填写</param>
+        /// <param name="balance">Balance / 红包类型卡券，指定金额</param>
+        /// <param name="openid">Open id / 指定领取者的openid，只有该用户能领取。bind_openid字段为true的卡券必须填写，bind_openid字段为false不必填写。</param>
+        /// <returns>Result</returns>
+        public async ValueTask<WXJsCardApiSignatureResult> CreateJsCardApiSignature(string cardId, string? code = null, decimal? balance = null, string? openid = null)
+        {
+            // Source data
+            var data = new SortedSet<string>();
+            if (!string.IsNullOrEmpty(cardId)) data.Add(cardId);
+            if (!string.IsNullOrEmpty(code)) data.Add(code);
+            if (balance.HasValue) data.Add(balance.Value.ToString());
+            if (!string.IsNullOrEmpty(openid)) data.Add(openid);
+
+            // Nonce
+            var nonce = CryptographyUtils.CreateRandString(RandStringKind.DigitAndLetter, 16).ToString();
+            data.Add(nonce);
+
+            // Timestamp
+            var timestamp = LocalizationUtils.UTCToJsMiliseconds().ToString();
+            data.Add(timestamp);
+
+            // Get ticket
+            var ticket = await GetJsApiCardTicketAsync();
+            data.Add(ticket);
+
+            // Signature
+            var source = string.Join(string.Empty, data);
+            var signature = Convert.ToHexString(await CryptographyUtils.SHA1Async(source)).ToLower();
+
+            // Return
+            return new WXJsCardApiSignatureResult
+            {
+                NonceStr = nonce,
+                Timestamp = timestamp,
+                SignType = "SHA1",
+                CardSign = signature
+            };
+        }
+
+        /// <summary>
         /// Create SHA1 signature
         /// 创建SHA1签名
         /// </summary>
@@ -189,6 +240,41 @@ namespace com.etsoo.WeiXin
             }
 
             return JsApiTicket;
+        }
+
+        /// <summary>
+        /// Get Js API Card ticket
+        /// 获取脚本卡券接口凭证
+        /// </summary>
+        /// <returns>Result</returns>
+        /// <exception cref="NullReferenceException"></exception>
+        /// <exception cref="WXClientException"></exception>
+        public async ValueTask<string> GetJsApiCardTicketAsync()
+        {
+            if (JsApiCardTicket == null || JsApiCardTicketExpired == null || JsApiCardTicketExpired.Value <= DateTime.Now)
+            {
+                var accessToken = await GetAcessTokenAsync();
+                var api = $"{ApiUri}ticket/getticket?access_token={accessToken}&type=wx_card";
+
+                var result = await GetAsync<WXJsApiTokenResult>(api);
+                if (result == null)
+                {
+                    throw new NullReferenceException();
+                }
+
+                if (result.Ticket != null)
+                {
+                    JsApiCardTicket = result.Ticket;
+                    JsApiCardTicketExpired = DateTime.Now.AddSeconds(result.ExpiresIn!.Value);
+                    return JsApiCardTicket;
+                }
+                else
+                {
+                    throw new WXClientException(result);
+                }
+            }
+
+            return JsApiCardTicket;
         }
     }
 }
