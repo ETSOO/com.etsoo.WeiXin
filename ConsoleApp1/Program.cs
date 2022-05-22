@@ -23,7 +23,7 @@ var client = new WXClient(httpClient, parts[0].Trim(), parts[1].Trim());
 
 try
 {
-    var result = await client.CreateJsCardApiSignature("p1Pj9jr90_SQRaVqYI239Ka1erk");
+    var result = await client.CreateJsCardApiSignatureAsync("p1Pj9jr90_SQRaVqYI239Ka1erk");
     Console.WriteLine($"Js Api Ticket: {result}");
 }
 catch (Exception ex)

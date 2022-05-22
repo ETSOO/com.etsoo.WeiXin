@@ -1,6 +1,6 @@
-﻿using com.etsoo.Utils.Crypto;
-using com.etsoo.Utils.Localization;
-using com.etsoo.Utils.Net;
+﻿using com.etsoo.HTTP;
+using com.etsoo.Utils;
+using com.etsoo.Utils.Crypto;
 using com.etsoo.Utils.String;
 using com.etsoo.WeiXin.Dto;
 using com.etsoo.WeiXin.Support;
@@ -19,6 +19,11 @@ namespace com.etsoo.WeiXin
         /// 接口基本地址
         /// </summary>
         public const string ApiUri = "https://api.weixin.qq.com/cgi-bin/";
+
+        public Task CreateJsCardApiSignature(string v)
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// The globally unique interface calling credentials of the official account
@@ -103,7 +108,7 @@ namespace com.etsoo.WeiXin
             data["noncestr"] = nonce;
 
             // Timestamp
-            var timestamp = LocalizationUtils.UTCToJsMiliseconds().ToString();
+            var timestamp = SharedUtils.UTCToJsMiliseconds().ToString();
             data["timestamp"] = timestamp;
 
             // Get ticket
@@ -146,7 +151,7 @@ namespace com.etsoo.WeiXin
             data.Add(nonce);
 
             // Timestamp
-            var timestamp = LocalizationUtils.UTCToJsMiliseconds().ToString();
+            var timestamp = SharedUtils.UTCToJsMiliseconds().ToString();
             data.Add(timestamp);
 
             // Get ticket
