@@ -11,7 +11,7 @@ namespace TestProject1
     public class WXMessageUnitTests
     {
         readonly WXClient client = new(new HttpClient(), "wx5823bf96d3bd56c7", "***", "QDG6eK", "jWmYm7qr5nMoAUwZRjGtBxmz3KA1tkAj3ykkR6q2B2C");
-        readonly WXMessageCallbackInput rq = new("1409659813", "1372623149", "aes", "477715d11cdb4164915debcba66cb864d751f3e6");
+        readonly WXMessageCallbackInput rq = new("abc", "1409659813", "1372623149", "d2157f2f9079f4d6257b45edf665c43c62e60a0a", "aes", "477715d11cdb4164915debcba66cb864d751f3e6");
 
         [TestMethod]
         public async Task DecryptTests()
@@ -48,7 +48,7 @@ namespace TestProject1
                 // Parse
                 var dic = await XmlUtils.ParseXmlAsync(stream);
                 stream.Position = 0;
-                var sourceMessage = await client.ParseMessageAsync<WXTextMessage>(stream, new WXMessageCallbackInput(dic["TimeStamp"], dic["Nonce"], "aes", dic["MsgSignature"]));
+                var sourceMessage = await client.ParseMessageAsync<WXTextMessage>(stream, new WXMessageCallbackInput("abc", dic["TimeStamp"], dic["Nonce"], await client.CreateSignatureAsync(dic["TimeStamp"], dic["Nonce"]), "aes", dic["MsgSignature"]));
 
                 Assert.AreEqual(message.FromUserName, sourceMessage?.ToUserName);
                 Assert.AreEqual("reply", sourceMessage?.Content);

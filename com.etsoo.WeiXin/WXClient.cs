@@ -105,24 +105,37 @@ namespace com.etsoo.WeiXin
         /// </summary>
         /// <param name="input">Input data</param>
         /// <returns>Result</returns>
-        public async ValueTask<bool> CheckSignatureAsync(WXCheckSignatureInput input)
+        public async ValueTask<bool> CheckSignatureAsync(IWXCheckSignatureInput input)
         {
             // Validate token
             if (string.IsNullOrEmpty(token)) return false;
 
-            // Source
-            var data = new SortedSet<string>
-            {
-                token,
-                input.Timestamp,
-                input.Nonce
-            };
-
             // Signature
-            var signature = await WXUtils.CreateSignatureAsync(data);
+            var signature = await CreateSignatureAsync(input.Timestamp, input.Nonce);
 
             // Result
             return signature == input.Signature;
+        }
+
+        /// <summary>
+        /// Create signature
+        /// 创建签名
+        /// </summary>
+        /// <param name="timestamp">Timestamp</param>
+        /// <param name="nonce">Nonce</param>
+        /// <returns>Result</returns>
+        public async Task<string> CreateSignatureAsync(string timestamp, string nonce)
+        {
+            // Source
+            var data = new SortedSet<string>
+            {
+                token!,
+                timestamp,
+                nonce
+            };
+
+            // Signature
+            return await WXUtils.CreateSignatureAsync(data);
         }
 
         /// <summary>
@@ -326,6 +339,9 @@ namespace com.etsoo.WeiXin
         /// <returns>Message</returns>
         public async Task<WXMessage?> ParseMessageAsync(Stream input, WXMessageCallbackInput rq)
         {
+            // 验证签名，确定是否来自微信
+            if (await CheckSignatureAsync(rq) is false) return null;
+
             // 第一层数据
             var dic = await XmlUtils.ParseXmlAsync(input);
 
@@ -344,7 +360,7 @@ namespace com.etsoo.WeiXin
                 if (signResult != rq.MsgSignature) return null;
 
                 // 解密
-                var bytes = WXUtils.MessageDecrypt(encrypt, aesKey);
+                var bytes = await WXUtils.MessageDecryptAsync(encrypt, aesKey);
                 if (bytes == null) return null;
 
                 // 读取解密的第一层数据
@@ -423,7 +439,7 @@ namespace com.etsoo.WeiXin
                 ts.Position = 0;
 
                 var source = await SharedUtils.StreamToStringAsync(ts);
-                var encrypt = WXUtils.MessageEncrypt(source, aesKey, AppId);
+                var encrypt = await WXUtils.MessageEncryptAsync(source, aesKey, AppId);
 
                 var nonce = CryptographyUtils.CreateRandString(RandStringKind.DigitAndLetter, 10).ToString();
                 var timestamp = SharedUtils.UTCToUnixSeconds().ToString();
@@ -434,7 +450,7 @@ namespace com.etsoo.WeiXin
                 };
                 var signResult = await WXUtils.CreateSignatureAsync(signData);
 
-                using var writer = XmlWriter.Create(output, new XmlWriterSettings { Async = true, OmitXmlDeclaration = true });
+                await using var writer = XmlWriter.Create(output, new XmlWriterSettings { Async = true, OmitXmlDeclaration = true });
 
                 await writer.WriteStartElementAsync(null, "xml", null);
 

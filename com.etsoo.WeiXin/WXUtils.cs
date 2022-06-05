@@ -1,4 +1,5 @@
-﻿using com.etsoo.Utils.Crypto;
+﻿using com.etsoo.Utils;
+using com.etsoo.Utils.Crypto;
 using com.etsoo.Utils.String;
 using System.Net;
 using System.Security.Cryptography;
@@ -48,12 +49,12 @@ namespace com.etsoo.WeiXin
         /// <param name="Input">密文</param>
         /// <param name="EncodingAESKey">签名密码</param>
         /// <returns>加密结果</returns>
-        public static byte[] MessageDecrypt(string Input, string EncodingAESKey)
+        public static async Task<byte[]> MessageDecryptAsync(string Input, string EncodingAESKey)
         {
             var Key = Convert.FromBase64String(EncodingAESKey + "=");
             var Iv = new byte[16];
             Array.Copy(Key, Iv, 16);
-            var btmpMsg = AESDecrypt(Input, Iv, Key);
+            var btmpMsg = await AESDecryptAsync(Input, Iv, Key);
 
             var len = BitConverter.ToInt32(btmpMsg, 16);
             len = IPAddress.NetworkToHostOrder(len);
@@ -93,7 +94,7 @@ namespace com.etsoo.WeiXin
             return res;
         }
 
-        static byte[] AESDecrypt(string Input, byte[] Iv, byte[] Key)
+        static async Task<byte[]> AESDecryptAsync(string Input, byte[] Iv, byte[] Key)
         {
             using var aes = Aes.Create();
             aes.KeySize = 256;
@@ -105,13 +106,13 @@ namespace com.etsoo.WeiXin
 
             var decrypt = aes.CreateDecryptor(aes.Key, aes.IV);
 
-            using var ms = new MemoryStream();
-            using (var cs = new CryptoStream(ms, decrypt, CryptoStreamMode.Write))
+            await using var ms = SharedUtils.GetStream();
+            await using (var cs = new CryptoStream(ms, decrypt, CryptoStreamMode.Write, true))
             {
                 var xXml = Convert.FromBase64String(Input);
                 var msg = new byte[xXml.Length + 32 - xXml.Length % 32];
                 Array.Copy(xXml, msg, xXml.Length);
-                cs.Write(xXml, 0, xXml.Length);
+                await cs.WriteAsync(xXml);
             }
             return decode2(ms.ToArray());
         }
@@ -138,7 +139,7 @@ namespace com.etsoo.WeiXin
             return Encoding.UTF8.GetBytes(string.Empty.PadRight(amount_to_pad, pad_chr));
         }
 
-        static string AESEncrypt(byte[] Input, byte[] Iv, byte[] Key)
+        static async Task<string> AESEncryptAsync(byte[] Input, byte[] Iv, byte[] Key)
         {
             using var aes = Aes.Create();
             aes.KeySize = 256;
@@ -157,10 +158,10 @@ namespace com.etsoo.WeiXin
             Array.Copy(pad, 0, msg, Input.Length, pad.Length);
             #endregion
 
-            using var ms = new MemoryStream();
-            using (var cs = new CryptoStream(ms, encrypt, CryptoStreamMode.Write))
+            await using var ms = SharedUtils.GetStream();
+            await using (var cs = new CryptoStream(ms, encrypt, CryptoStreamMode.Write, true))
             {
-                cs.Write(msg, 0, msg.Length);
+                await cs.WriteAsync(msg);
             }
             return Convert.ToBase64String(ms.ToArray());
         }
@@ -172,7 +173,7 @@ namespace com.etsoo.WeiXin
         /// <param name="EncodingAESKey">签名密码</param>
         /// <param name="appid">程序编号</param>
         /// <returns>加密结果</returns>
-        public static string MessageEncrypt(string Input, string EncodingAESKey, string appid)
+        public static async Task<string> MessageEncryptAsync(string Input, string EncodingAESKey, string appid)
         {
             var Key = Convert.FromBase64String(EncodingAESKey + "=");
             var Iv = new byte[16];
@@ -189,7 +190,7 @@ namespace com.etsoo.WeiXin
             Array.Copy(btmpMsg, 0, bMsg, bRand.Length + bMsgLen.Length, btmpMsg.Length);
             Array.Copy(bAppid, 0, bMsg, bRand.Length + bMsgLen.Length + btmpMsg.Length, bAppid.Length);
 
-            return AESEncrypt(bMsg, Iv, Key);
+            return await AESEncryptAsync(bMsg, Iv, Key);
         }
     }
 }

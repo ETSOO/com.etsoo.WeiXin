@@ -57,7 +57,7 @@ namespace com.etsoo.WeiXin.Message
         /// <returns>任务</returns>
         public async Task ReplyAsync(Stream output, Func<XmlWriter, Task> func)
         {
-            using var writer = XmlWriter.Create(output, new XmlWriterSettings { Async = true, OmitXmlDeclaration = true });
+            await using var writer = XmlWriter.Create(output, new XmlWriterSettings { Async = true, OmitXmlDeclaration = true });
 
             await writer.WriteStartElementAsync(null, "xml", null);
 

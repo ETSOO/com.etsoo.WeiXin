@@ -16,7 +16,16 @@ namespace com.etsoo.WeiXin
         /// </summary>
         /// <param name="input">Input data</param>
         /// <returns>Result</returns>
-        ValueTask<bool> CheckSignatureAsync(WXCheckSignatureInput input);
+        ValueTask<bool> CheckSignatureAsync(IWXCheckSignatureInput input);
+
+        /// <summary>
+        /// Create signature
+        /// 创建签名
+        /// </summary>
+        /// <param name="timestamp">Timestamp</param>
+        /// <param name="nonce">Nonce</param>
+        /// <returns>Result</returns>
+        Task<string> CreateSignatureAsync(string timestamp, string nonce);
 
         /// <summary>
         /// Create Js API signature
