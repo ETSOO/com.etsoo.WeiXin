@@ -20,7 +20,7 @@ namespace TestProject1
             var input = SharedUtils.GetStream("<xml><ToUserName><![CDATA[wx5823bf96d3bd56c7]]></ToUserName><Encrypt><![CDATA[RypEvHKD8QQKFhvQ6QleEB4J58tiPdvo+rtK1I9qca6aM/wvqnLSV5zEPeusUiX5L5X/0lWfrf0QADHHhGd3QczcdCUpj911L3vg3W/sYYvuJTs3TUUkSUXxaccAS0qhxchrRYt66wiSpGLYL42aM6A8dTT+6k4aSknmPj48kzJs8qLjvd4Xgpue06DOdnLxAUHzM6+kDZ+HMZfJYuR+LtwGc2hgf5gsijff0ekUNXZiqATP7PF5mZxZ3Izoun1s4zG4LUMnvw2r+KqCKIw+3IQH03v+BCA9nMELNqbSf6tiWSrXJB3LAVGUcallcrw8V2t9EL4EhzJWrQUax5wLVMNS0+rUPA3k22Ncx4XXZS9o0MBH27Bo6BpNelZpS+/uh9KsNlY6bHCmJU9p8g7m3fVKn28H3KDYA5Pl/T8Z1ptDAVe0lXdQ2YoyyH2uyPIGHBZZIs2pDBS8R07+qN+E7Q==]]></Encrypt></xml>");
 
             // Act
-            var message = await client.ParseMessageAsync<WXTextMessage>(input, rq);
+            var (message, _) = await client.ParseMessageAsync<WXTextMessage>(input, rq);
 
             // Assert
             Assert.AreEqual(WXMessageType.text, message?.MsgType);
@@ -36,7 +36,7 @@ namespace TestProject1
             var input = SharedUtils.GetStream(source);
 
             // Act
-            var message = await client.ParseMessageAsync<WXTextMessage>(input, rq);
+            var (message, _) = await client.ParseMessageAsync<WXTextMessage>(input, rq);
 
             // Output
             if (message is not null)
@@ -48,7 +48,7 @@ namespace TestProject1
                 // Parse
                 var dic = await XmlUtils.ParseXmlAsync(stream);
                 stream.Position = 0;
-                var sourceMessage = await client.ParseMessageAsync<WXTextMessage>(stream, new WXMessageCallbackInput("abc", dic["TimeStamp"], dic["Nonce"], await client.CreateSignatureAsync(dic["TimeStamp"], dic["Nonce"]), "aes", dic["MsgSignature"]));
+                var (sourceMessage, _) = await client.ParseMessageAsync<WXTextMessage>(stream, new WXMessageCallbackInput("abc", dic["TimeStamp"], dic["Nonce"], await client.CreateSignatureAsync(dic["TimeStamp"], dic["Nonce"]), "aes", dic["MsgSignature"]));
 
                 Assert.AreEqual(message.FromUserName, sourceMessage?.ToUserName);
                 Assert.AreEqual("reply", sourceMessage?.Content);
@@ -110,7 +110,7 @@ namespace TestProject1
             var m1 = s.Deserialize(input) as WXImageMessage;
 
             input.Position = 0;
-            var m2 = await client.ParseMessageAsync<WXImageMessage>(input, rq);
+            var (m2, _) = await client.ParseMessageAsync<WXImageMessage>(input, rq);
 
             // Assert
             Assert.AreEqual(m1?.MediaId, m2?.MediaId);
@@ -138,7 +138,7 @@ namespace TestProject1
             var m1 = s.Deserialize(input) as WXVoiceMessage;
 
             input.Position = 0;
-            var m2 = await client.ParseMessageAsync<WXVoiceMessage>(input, rq);
+            var (m2, _) = await client.ParseMessageAsync<WXVoiceMessage>(input, rq);
 
             // Assert
             Assert.AreEqual(m1?.MediaId, m2?.MediaId);
@@ -166,7 +166,7 @@ namespace TestProject1
             var m1 = s.Deserialize(input) as WXShortVideoMessage;
 
             input.Position = 0;
-            var m2 = await client.ParseMessageAsync<WXShortVideoMessage>(input, rq);
+            var (m2, _) = await client.ParseMessageAsync<WXShortVideoMessage>(input, rq);
 
             // Assert
             Assert.AreEqual(m1?.MediaId, m2?.MediaId);
@@ -195,7 +195,7 @@ namespace TestProject1
             var m1 = s.Deserialize(input) as WXLocationMessage;
 
             input.Position = 0;
-            var m2 = await client.ParseMessageAsync<WXLocationMessage>(input, rq);
+            var (m2, _) = await client.ParseMessageAsync<WXLocationMessage>(input, rq);
 
             // Assert
             Assert.AreEqual(m1?.LocationX, m2?.LocationX);
@@ -225,7 +225,7 @@ namespace TestProject1
             var m1 = s.Deserialize(input) as WXLinkMessage;
 
             input.Position = 0;
-            var m2 = await client.ParseMessageAsync<WXLinkMessage>(input, rq);
+            var (m2, _) = await client.ParseMessageAsync<WXLinkMessage>(input, rq);
 
             // Assert
             Assert.AreEqual(m1?.Title, m2?.Title);
@@ -253,7 +253,7 @@ namespace TestProject1
             var m1 = s.Deserialize(input) as WXSubscribeEventMessage;
 
             input.Position = 0;
-            var m2 = await client.ParseMessageAsync<WXSubscribeEventMessage>(input, rq);
+            var (m2, _) = await client.ParseMessageAsync<WXSubscribeEventMessage>(input, rq);
 
             // Assert
             Assert.AreEqual(m1?.EventKey, m2?.EventKey);
@@ -281,7 +281,7 @@ namespace TestProject1
             var m1 = s.Deserialize(input) as WXScanEventMessage;
 
             input.Position = 0;
-            var m2 = await client.ParseMessageAsync<WXScanEventMessage>(input, rq);
+            var (m2, _) = await client.ParseMessageAsync<WXScanEventMessage>(input, rq);
 
             // Assert
             Assert.AreEqual(m1?.EventKey, m2?.EventKey);
@@ -310,7 +310,7 @@ namespace TestProject1
             var m1 = s.Deserialize(input) as WXLocationEventMessage;
 
             input.Position = 0;
-            var m2 = await client.ParseMessageAsync<WXLocationEventMessage>(input, rq);
+            var (m2, _) = await client.ParseMessageAsync<WXLocationEventMessage>(input, rq);
 
             // Assert
             Assert.AreEqual(m1?.Latitude, m2?.Latitude);
@@ -337,7 +337,7 @@ namespace TestProject1
             var m1 = s.Deserialize(input) as WXClickEventMessage;
 
             input.Position = 0;
-            var m2 = await client.ParseMessageAsync<WXClickEventMessage>(input, rq);
+            var (m2, _) = await client.ParseMessageAsync<WXClickEventMessage>(input, rq);
 
             // Assert
             Assert.AreEqual(m1?.EventKey, m2?.EventKey);
@@ -362,7 +362,7 @@ namespace TestProject1
             var m1 = s.Deserialize(input) as WXViewEventMessage;
 
             input.Position = 0;
-            var m2 = await client.ParseMessageAsync<WXViewEventMessage>(input, rq);
+            var (m2, _) = await client.ParseMessageAsync<WXViewEventMessage>(input, rq);
 
             // Assert
             Assert.AreEqual(m1?.EventKey, m2?.EventKey);
@@ -389,7 +389,7 @@ namespace TestProject1
             var m1 = s.Deserialize(input) as WXScanCodeEventMessage;
 
             input.Position = 0;
-            var m2 = await client.ParseMessageAsync<WXScanCodeEventMessage>(input, rq);
+            var (m2, _) = await client.ParseMessageAsync<WXScanCodeEventMessage>(input, rq);
 
             // Assert
             Assert.AreEqual(m1?.EventKey, m2?.EventKey);
@@ -419,7 +419,7 @@ namespace TestProject1
             var m1 = s.Deserialize(input) as WXScanCodeWaitEventMessage;
 
             input.Position = 0;
-            var m2 = await client.ParseMessageAsync<WXScanCodeWaitEventMessage>(input, rq);
+            var (m2, _) = await client.ParseMessageAsync<WXScanCodeWaitEventMessage>(input, rq);
 
             // Assert
             Assert.AreEqual(m1?.EventKey, m2?.EventKey);
@@ -449,7 +449,7 @@ namespace TestProject1
             var m1 = s.Deserialize(input) as WXSysPhotoEventMessage;
 
             input.Position = 0;
-            var m2 = await client.ParseMessageAsync<WXSysPhotoEventMessage>(input, rq);
+            var (m2, _) = await client.ParseMessageAsync<WXSysPhotoEventMessage>(input, rq);
 
             // Assert
             Assert.AreEqual(m1?.EventKey, m2?.EventKey);
@@ -480,7 +480,7 @@ namespace TestProject1
             var m1 = s.Deserialize(input) as WXAlbumPhotoEventMessage;
 
             input.Position = 0;
-            var m2 = await client.ParseMessageAsync<WXAlbumPhotoEventMessage>(input, rq);
+            var (m2, _) = await client.ParseMessageAsync<WXAlbumPhotoEventMessage>(input, rq);
 
             // Assert
             Assert.AreEqual(m1?.EventKey, m2?.EventKey);
@@ -511,7 +511,7 @@ namespace TestProject1
             var m1 = s.Deserialize(input) as WXWeiXinPhotoEventMessage;
 
             input.Position = 0;
-            var m2 = await client.ParseMessageAsync<WXWeiXinPhotoEventMessage>(input, rq);
+            var (m2, _) = await client.ParseMessageAsync<WXWeiXinPhotoEventMessage>(input, rq);
 
             // Assert
             Assert.AreEqual(m1?.EventKey, m2?.EventKey);
@@ -543,7 +543,7 @@ namespace TestProject1
             var m1 = s.Deserialize(input) as WXLocationSelectEventMessage;
 
             input.Position = 0;
-            var m2 = await client.ParseMessageAsync<WXLocationSelectEventMessage>(input, rq);
+            var (m2, _) = await client.ParseMessageAsync<WXLocationSelectEventMessage>(input, rq);
 
             // Assert
             Assert.AreEqual(m1?.EventKey, m2?.EventKey);
@@ -574,7 +574,7 @@ namespace TestProject1
             var m1 = s.Deserialize(input) as WXViewMiniprogramEventMessage;
 
             input.Position = 0;
-            var m2 = await client.ParseMessageAsync<WXViewMiniprogramEventMessage>(input, rq);
+            var (m2, _) = await client.ParseMessageAsync<WXViewMiniprogramEventMessage>(input, rq);
 
             // Assert
             Assert.AreEqual(m1?.EventKey, m2?.EventKey);
@@ -611,7 +611,7 @@ namespace TestProject1
             var m1 = s.Deserialize(input) as WXSubscribePopupEventMessage;
 
             input.Position = 0;
-            var m2 = await client.ParseMessageAsync<WXSubscribePopupEventMessage>(input, rq);
+            var (m2, _) = await client.ParseMessageAsync<WXSubscribePopupEventMessage>(input, rq);
 
             // Assert
             Assert.AreEqual(m1?.FromUserName, m2?.FromUserName);
@@ -645,7 +645,7 @@ namespace TestProject1
             var m1 = s.Deserialize(input) as WXSubscribeManageEventMessage;
 
             input.Position = 0;
-            var m2 = await client.ParseMessageAsync<WXSubscribeManageEventMessage>(input, rq);
+            var (m2, _) = await client.ParseMessageAsync<WXSubscribeManageEventMessage>(input, rq);
 
             // Assert
             Assert.AreEqual(m1?.FromUserName, m2?.FromUserName);
@@ -680,7 +680,7 @@ namespace TestProject1
             var m1 = s.Deserialize(input) as WXSubscribeSendEventMessage;
 
             input.Position = 0;
-            var m2 = await client.ParseMessageAsync<WXSubscribeSendEventMessage>(input, rq);
+            var (m2, _) = await client.ParseMessageAsync<WXSubscribeSendEventMessage>(input, rq);
 
             // Assert
             Assert.AreEqual(m1?.ToUserName, m2?.ToUserName);

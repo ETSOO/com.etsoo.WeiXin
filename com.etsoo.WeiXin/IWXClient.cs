@@ -80,7 +80,7 @@ namespace com.etsoo.WeiXin
         /// <param name="input">Input stream</param>
         /// <param name="rq">Request data</param>
         /// <returns>Message</returns>
-        Task<T?> ParseMessageAsync<T>(Stream input, WXMessageCallbackInput rq) where T : WXMessage;
+        Task<(T?, Dictionary<string, string>)> ParseMessageAsync<T>(Stream input, WXMessageCallbackInput rq) where T : WXMessage;
 
         /// <summary>
         /// Parse message
@@ -88,8 +88,8 @@ namespace com.etsoo.WeiXin
         /// </summary>
         /// <param name="input">Input stream</param>
         /// <param name="rq">Request data</param>
-        /// <returns>Message</returns>
-        Task<WXMessage?> ParseMessageAsync(Stream input, WXMessageCallbackInput rq);
+        /// <returns>Message and source dictionary</returns>
+        Task<(WXMessage?, Dictionary<string, string>)> ParseMessageAsync(Stream input, WXMessageCallbackInput rq);
 
         /// <summary>
         /// Reply message
