@@ -1,4 +1,6 @@
 ﻿using com.etsoo.WeiXin.Dto;
+using com.etsoo.WeiXin.Message;
+using System.Xml;
 
 namespace com.etsoo.WeiXin
 {
@@ -8,6 +10,14 @@ namespace com.etsoo.WeiXin
     /// </summary>
     public interface IWXClient
     {
+        /// <summary>
+        /// Check signature
+        /// 检查签名
+        /// </summary>
+        /// <param name="input">Input data</param>
+        /// <returns>Result</returns>
+        ValueTask<bool> CheckSignatureAsync(WXCheckSignatureInput input);
+
         /// <summary>
         /// Create Js API signature
         /// 创建 Js 接口签名
@@ -52,5 +62,41 @@ namespace com.etsoo.WeiXin
         /// <exception cref="NullReferenceException"></exception>
         /// <exception cref="WXClientException"></exception>
         ValueTask<string> GetJsApiCardTicketAsync();
+
+        /// <summary>
+        /// Parse message
+        /// 解析消息
+        /// </summary>
+        /// <typeparam name="T">Generic message type</typeparam>
+        /// <param name="input">Input stream</param>
+        /// <param name="rq">Request data</param>
+        /// <returns>Message</returns>
+        Task<T?> ParseMessageAsync<T>(Stream input, WXMessageCallbackInput rq) where T : WXMessage;
+
+        /// <summary>
+        /// Parse message
+        /// 解析消息
+        /// </summary>
+        /// <param name="input">Input stream</param>
+        /// <param name="rq">Request data</param>
+        /// <returns>Message</returns>
+        Task<WXMessage?> ParseMessageAsync(Stream input, WXMessageCallbackInput rq);
+
+        /// <summary>
+        /// Reply message
+        /// 回复消息
+        /// </summary>
+        /// <param name="output">output stream</param>
+        /// <param name="message">Message</param>
+        /// <param name="func">Reply callback</param>
+        /// <returns>Task</returns>
+        Task ReplyMessageAsync(Stream output, WXMessage message, Func<XmlWriter, Task> func);
+
+        /// <summary>
+        /// 发送订阅通知
+        /// </summary>
+        /// <param name="input">输入的信息</param>
+        /// <returns>操作结果</returns>
+        Task<WXApiError?> SendMessageAsync(WXSendMessageInput input);
     }
 }

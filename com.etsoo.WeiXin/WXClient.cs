@@ -1,10 +1,11 @@
 ﻿using com.etsoo.HTTP;
 using com.etsoo.Utils;
 using com.etsoo.Utils.Crypto;
-using com.etsoo.Utils.String;
 using com.etsoo.WeiXin.Dto;
+using com.etsoo.WeiXin.Message;
 using com.etsoo.WeiXin.Support;
 using Microsoft.Extensions.Configuration;
+using System.Xml;
 
 namespace com.etsoo.WeiXin
 {
@@ -19,11 +20,6 @@ namespace com.etsoo.WeiXin
         /// 接口基本地址
         /// </summary>
         public const string ApiUri = "https://api.weixin.qq.com/cgi-bin/";
-
-        public Task CreateJsCardApiSignature(string v)
-        {
-            throw new NotImplementedException();
-        }
 
         /// <summary>
         /// The globally unique interface calling credentials of the official account
@@ -61,6 +57,12 @@ namespace com.etsoo.WeiXin
         // App secret
         private readonly string appSecret;
 
+        // Token
+        private readonly string? token;
+
+        // EncodingAESKey
+        private readonly string? aesKey;
+
         /// <summary>
         /// Constructor
         /// 构造函数
@@ -68,10 +70,14 @@ namespace com.etsoo.WeiXin
         /// <param name="client">Client</param>
         /// <param name="appId">App id</param>
         /// <param name="appSecret">App secret</param>
-        public WXClient(HttpClient client, string appId, string appSecret) : base(client)
+        /// <param name="token">Token, used for signature check</param>
+        /// <param name="aesKey">Encoding AES key</param>
+        public WXClient(HttpClient client, string appId, string appSecret, string? token = null, string? aesKey = null) : base(client)
         {
             AppId = appId;
             this.appSecret = appSecret;
+            this.token = token;
+            this.aesKey = aesKey;
 
             Options.PropertyNamingPolicy = new WXClientJsonNamingPolicy();
         }
@@ -86,9 +92,37 @@ namespace com.etsoo.WeiXin
         public WXClient(HttpClient client, IConfigurationSection section, Func<string, string>? secureManager = null)
             : this(client
                   , CryptographyUtils.UnsealData(section.GetValue<string>("AppId"), secureManager)
-                  , CryptographyUtils.UnsealData(section.GetValue<string>("AppSecret"), secureManager))
+                  , CryptographyUtils.UnsealData(section.GetValue<string>("AppSecret"), secureManager)
+                  , CryptographyUtils.UnsealData(section.GetValue<string>("Token"), secureManager)
+                  , CryptographyUtils.UnsealData(section.GetValue<string>("EncodingAESKey"), secureManager))
         {
 
+        }
+
+        /// <summary>
+        /// Check signature
+        /// 检查签名
+        /// </summary>
+        /// <param name="input">Input data</param>
+        /// <returns>Result</returns>
+        public async ValueTask<bool> CheckSignatureAsync(WXCheckSignatureInput input)
+        {
+            // Validate token
+            if (string.IsNullOrEmpty(token)) return false;
+
+            // Source
+            var data = new SortedSet<string>
+            {
+                token,
+                input.Timestamp,
+                input.Nonce
+            };
+
+            // Signature
+            var signature = await WXUtils.CreateSignatureAsync(data);
+
+            // Result
+            return signature == input.Signature;
         }
 
         /// <summary>
@@ -116,7 +150,7 @@ namespace com.etsoo.WeiXin
             data["jsapi_ticket"] = ticket;
 
             // Signature
-            var signature = await CreateSignatureAsync(data);
+            var signature = await WXUtils.CreateSignatureAsync(data);
 
             // Return
             return new WXJsApiSignatureResult
@@ -159,8 +193,7 @@ namespace com.etsoo.WeiXin
             data.Add(ticket);
 
             // Signature
-            var source = string.Join(string.Empty, data);
-            var signature = Convert.ToHexString(await CryptographyUtils.SHA1Async(source)).ToLower();
+            var signature = await WXUtils.CreateSignatureAsync(data);
 
             // Return
             return new WXJsCardApiSignatureResult
@@ -170,19 +203,6 @@ namespace com.etsoo.WeiXin
                 SignType = "SHA1",
                 CardSign = signature
             };
-        }
-
-        /// <summary>
-        /// Create SHA1 signature
-        /// 创建SHA1签名
-        /// </summary>
-        /// <param name="data">Source data</param>
-        /// <returns>Result</returns>
-        protected async Task<string> CreateSignatureAsync(SortedDictionary<string, string> data)
-        {
-            var source = data.JoinAsString().TrimEnd('&');
-            var signatureBytes = await CryptographyUtils.SHA1Async(source);
-            return Convert.ToHexString(signatureBytes).ToLower();
         }
 
         /// <summary>
@@ -280,6 +300,164 @@ namespace com.etsoo.WeiXin
             }
 
             return JsApiCardTicket;
+        }
+
+        /// <summary>
+        /// Parse message
+        /// 解析消息
+        /// </summary>
+        /// <typeparam name="T">Generic message type</typeparam>
+        /// <param name="input">Input stream</param>
+        /// <param name="rq">Request data</param>
+        /// <returns>Message</returns>
+        public async Task<T?> ParseMessageAsync<T>(Stream input, WXMessageCallbackInput rq) where T : WXMessage
+        {
+            var message = await ParseMessageAsync(input, rq);
+            if (message == null) return null;
+            return message as T;
+        }
+
+        /// <summary>
+        /// Parse message
+        /// 解析消息
+        /// </summary>
+        /// <param name="input">Input stream</param>
+        /// <param name="rq">Request data</param>
+        /// <returns>Message</returns>
+        public async Task<WXMessage?> ParseMessageAsync(Stream input, WXMessageCallbackInput rq)
+        {
+            // 第一层数据
+            var dic = await XmlUtils.ParseXmlAsync(input);
+
+            // 是否加密
+            if (dic.TryGetValue("Encrypt", out var encrypt))
+            {
+                // 必须传递了消息签名，且定义了Encoding AES key
+                if (rq.MsgSignature == null || token == null || aesKey == null) return null;
+
+                // 验证签名
+                var signData = new SortedSet<string>
+                {
+                    token, rq.Timestamp, rq.Nonce, encrypt
+                };
+                var signResult = await WXUtils.CreateSignatureAsync(signData);
+                if (signResult != rq.MsgSignature) return null;
+
+                // 解密
+                var bytes = WXUtils.MessageDecrypt(encrypt, aesKey);
+                if (bytes == null) return null;
+
+                // 读取解密的第一层数据
+                dic = await XmlUtils.ParseXmlAsync(SharedUtils.GetStream(bytes));
+            }
+
+            // 解析为消息对象
+            var msgType = XmlUtils.GetValue<WXMessageType>(dic, "MsgType");
+            if (msgType is not null)
+            {
+                // 是否为事件
+                if (msgType == WXMessageType.@event)
+                {
+                    var eventType = XmlUtils.GetValue<WXEventType>(dic, "Event");
+                    if (eventType is null) return null;
+
+                    return eventType switch
+                    {
+                        WXEventType.subscribe => new WXSubscribeEventMessage(dic),
+                        WXEventType.unsubscribe => new WXUnsubscribeEventMessage(dic),
+                        WXEventType.SCAN => new WXScanEventMessage(dic),
+                        WXEventType.LOCATION => new WXLocationEventMessage(dic),
+                        WXEventType.CLICK => new WXClickEventMessage(dic),
+                        WXEventType.VIEW => new WXViewEventMessage(dic),
+                        WXEventType.scancode_push => new WXScanCodeEventMessage(dic),
+                        WXEventType.scancode_waitmsg => new WXScanCodeWaitEventMessage(dic),
+                        WXEventType.pic_sysphoto => new WXSysPhotoEventMessage(dic),
+                        WXEventType.pic_photo_or_album => new WXAlbumPhotoEventMessage(dic),
+                        WXEventType.pic_weixin => new WXWeiXinPhotoEventMessage(dic),
+                        WXEventType.location_select => new WXLocationSelectEventMessage(dic),
+                        WXEventType.view_miniprogram => new WXViewMiniprogramEventMessage(dic),
+                        WXEventType.subscribe_msg_popup_event => new WXSubscribePopupEventMessage(dic),
+                        WXEventType.subscribe_msg_change_event => new WXSubscribeManageEventMessage(dic),
+                        WXEventType.subscribe_msg_sent_event => new WXSubscribeSendEventMessage(dic),
+                        _ => null
+                    };
+                }
+                else
+                {
+                    return msgType switch
+                    {
+                        WXMessageType.text => new WXTextMessage(dic),
+                        WXMessageType.image => new WXImageMessage(dic),
+                        WXMessageType.voice => new WXVoiceMessage(dic),
+                        WXMessageType.shortvideo => new WXShortVideoMessage(dic),
+                        WXMessageType.location => new WXLocationMessage(dic),
+                        WXMessageType.link => new WXLinkMessage(dic),
+                        _ => null
+                    };
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Reply message
+        /// 回复消息
+        /// </summary>
+        /// <param name="output">output stream</param>
+        /// <param name="message">Message</param>
+        /// <param name="func">Reply callback</param>
+        /// <returns>Task</returns>
+        public async Task ReplyMessageAsync(Stream output, WXMessage message, Func<XmlWriter, Task> func)
+        {
+            // Target stream
+            var isDirect = aesKey is null;
+            var ts = isDirect ? output : SharedUtils.GetStream();
+
+            // Output
+            await message.ReplyAsync(ts, func);
+
+            // Encrypt
+            if (isDirect is false && token is not null && aesKey is not null)
+            {
+                ts.Position = 0;
+
+                var source = await SharedUtils.StreamToStringAsync(ts);
+                var encrypt = WXUtils.MessageEncrypt(source, aesKey, AppId);
+
+                var nonce = CryptographyUtils.CreateRandString(RandStringKind.DigitAndLetter, 10).ToString();
+                var timestamp = SharedUtils.UTCToUnixSeconds().ToString();
+
+                var signData = new SortedSet<string>
+                {
+                    token, timestamp, nonce, encrypt
+                };
+                var signResult = await WXUtils.CreateSignatureAsync(signData);
+
+                using var writer = XmlWriter.Create(output, new XmlWriterSettings { Async = true, OmitXmlDeclaration = true });
+
+                await writer.WriteStartElementAsync(null, "xml", null);
+
+                await XmlUtils.WriteCDataAsync(writer, "Encrypt", encrypt);
+                await XmlUtils.WriteCDataAsync(writer, "MsgSignature", signResult);
+                await XmlUtils.WriteCDataAsync(writer, "TimeStamp", timestamp);
+                await XmlUtils.WriteCDataAsync(writer, "Nonce", nonce);
+
+                await writer.WriteEndElementAsync();
+            }
+        }
+
+        /// <summary>
+        /// 发送订阅通知
+        /// </summary>
+        /// <param name="input">输入的信息</param>
+        /// <returns>操作结果</returns>
+        public async Task<WXApiError?> SendMessageAsync(WXSendMessageInput input)
+        {
+            var accessToken = await GetAcessTokenAsync();
+            var api = $"{ApiUri}message/subscribe/bizsend?access_token={accessToken}";
+
+            return await PostAsync<WXSendMessageInput, WXApiError>(api, input);
         }
     }
 }
