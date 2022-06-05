@@ -226,6 +226,19 @@ namespace com.etsoo.WeiXin
         }
 
         /// <summary>
+        /// 下载临时媒体文件
+        /// </summary>
+        /// <param name="mediaId">Media id</param>
+        /// <param name="saveStream">Save stream</param>
+        /// <returns>Task</returns>
+        public async Task DownloadMediaAsync(string mediaId, Stream saveStream)
+        {
+            var accessToken = await GetAcessTokenAsync();
+            var api = $"{ApiUri}media/get?access_token={accessToken}&media_id={mediaId}";
+            await DownloadAsync(api, saveStream);
+        }
+
+        /// <summary>
         /// Get Access Token
         /// 获取访问凭据
         /// </summary>

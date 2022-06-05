@@ -47,6 +47,14 @@ namespace com.etsoo.WeiXin
         ValueTask<WXJsCardApiSignatureResult> CreateJsCardApiSignatureAsync(string cardId, string? code = null, decimal? balance = null, string? openid = null);
 
         /// <summary>
+        /// 下载临时媒体文件
+        /// </summary>
+        /// <param name="mediaId">Media id</param>
+        /// <param name="saveStream">Save stream</param>
+        /// <returns>Task</returns>
+        Task DownloadMediaAsync(string mediaId, Stream saveStream);
+
+        /// <summary>
         /// Get Access Token
         /// 获取访问凭据
         /// </summary>
