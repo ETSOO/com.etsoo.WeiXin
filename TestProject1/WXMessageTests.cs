@@ -691,5 +691,33 @@ namespace TestProject1
             Assert.AreEqual(1, m2?.SubscribeMsgSentEvent[0].ErrorCode);
             Assert.AreEqual("error", m2?.SubscribeMsgSentEvent[0].ErrorStatus);
         }
+
+        [TestMethod]
+        public async Task TemplateSendEventMessageTests()
+        {
+            // Arrange
+            var input = SharedUtils.GetStream(@"<xml> 
+              <ToUserName><![CDATA[gh_7f083739789a]]></ToUserName>  
+              <FromUserName><![CDATA[oia2TjuEGTNoeX76QEjQNrcURxG8]]></FromUserName>  
+              <CreateTime>1395658984</CreateTime>  
+              <MsgType><![CDATA[event]]></MsgType>  
+              <Event><![CDATA[TEMPLATESENDJOBFINISH]]></Event>  
+              <MsgID>200163840</MsgID>  
+              <Status><![CDATA[failed:user block]]></Status> 
+            </xml>");
+
+            // Act
+            var s = new XmlSerializer(typeof(WXTemplateSendEventMessage));
+            var m1 = s.Deserialize(input) as WXTemplateSendEventMessage;
+
+            input.Position = 0;
+            var (m2, _) = await client.ParseMessageAsync<WXTemplateSendEventMessage>(input, rq);
+
+            // Assert
+            Assert.AreEqual(m1?.MsgID, m2?.MsgID);
+            Assert.AreEqual(200163840, m1?.MsgID);
+            Assert.AreEqual("failed:user block", m2?.Status);
+            Assert.IsFalse(m2?.Success);
+        }
     }
 }

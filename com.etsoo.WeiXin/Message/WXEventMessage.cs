@@ -71,6 +71,11 @@
         view_miniprogram,
 
         /// <summary>
+        /// 模版消息发送任务完成后的事件推送
+        /// </summary>
+        TEMPLATESENDJOBFINISH,
+
+        /// <summary>
         /// 用户操作订阅通知弹窗
         /// </summary>
         subscribe_msg_popup_event,

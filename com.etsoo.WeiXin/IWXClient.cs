@@ -1,4 +1,5 @@
-﻿using com.etsoo.WeiXin.Dto;
+﻿using com.etsoo.HTTP;
+using com.etsoo.WeiXin.Dto;
 using com.etsoo.WeiXin.Message;
 using System.Xml;
 
@@ -10,6 +11,20 @@ namespace com.etsoo.WeiXin
     /// </summary>
     public interface IWXClient
     {
+        /// <summary>
+        /// 创建个性化自定义菜单
+        /// </summary>
+        /// <param name="json">菜单Json定义</param>
+        /// <returns>操作结果</returns>
+        Task<WXApiError?> CreateConditionalMenuAsync(string json);
+
+        /// <summary>
+        /// 创建自定义菜单
+        /// </summary>
+        /// <param name="json">菜单Json定义</param>
+        /// <returns>操作结果</returns>
+        Task<WXApiError?> CreateMenuAsync(string json);
+
         /// <summary>
         /// Check signature
         /// 检查签名
@@ -52,7 +67,7 @@ namespace com.etsoo.WeiXin
         /// <param name="mediaId">Media id</param>
         /// <param name="saveStream">Save stream</param>
         /// <returns>Task</returns>
-        Task DownloadMediaAsync(string mediaId, Stream saveStream);
+        Task<string> DownloadMediaAsync(string mediaId, Stream saveStream);
 
         /// <summary>
         /// Get Access Token
@@ -79,6 +94,30 @@ namespace com.etsoo.WeiXin
         /// <exception cref="NullReferenceException"></exception>
         /// <exception cref="WXClientException"></exception>
         ValueTask<string> GetJsApiCardTicketAsync();
+
+        /// <summary>
+        /// Get subscribe template list
+        /// 获取订阅模板列表
+        /// </summary>
+        /// <param name="saveStream">Save stream</param>
+        /// <returns>Task</returns>
+        Task GetSubscribeTemplateListAsync(Stream saveStream);
+
+        /// <summary>
+        /// Get template list
+        /// 获取模板列表
+        /// </summary>
+        /// <param name="saveStream">Save stream</param>
+        /// <returns>Task</returns>
+        Task GetTemplateListAsync(Stream saveStream);
+
+        /// <summary>
+        /// Get custom menu
+        /// 获取自定义菜单
+        /// </summary>
+        /// <param name="saveStream">Save stream</param>
+        /// <returns>Task</returns>
+        Task GetMenuAsync(Stream saveStream);
 
         /// <summary>
         /// Parse message
@@ -114,6 +153,80 @@ namespace com.etsoo.WeiXin
         /// </summary>
         /// <param name="input">输入的信息</param>
         /// <returns>操作结果</returns>
-        Task<WXApiError?> SendMessageAsync(WXSendMessageInput input);
+        Task<WXApiError?> SendSubscribeMessageAsync(WXSendMessageInput input);
+
+        /// <summary>
+        /// 发送模板消息
+        /// </summary>
+        /// <param name="input">输入的信息</param>
+        /// <returns>操作结果</returns>
+        Task<WXApiError?> SendTemplateMessageAsync(WXSendMessageInput input);
+
+        /// <summary>
+        /// 批量为用户打标签
+        /// </summary>
+        /// <param name="tagId">标签编号</param>
+        /// <param name="openids">粉丝编号</param>
+        /// <returns>结果</returns>
+        Task<WXApiError?> BatchTagAsync(int tagId, IEnumerable<string> openids);
+
+        /// <summary>
+        /// 批量为用户取消标签
+        /// </summary>
+        /// <param name="tagId">标签编号</param>
+        /// <param name="openids">粉丝编号</param>
+        /// <returns>结果</returns>
+        Task<WXApiError?> BatchUntagAsync(int tagId, IEnumerable<string> openids);
+
+        /// <summary>
+        /// 创建标签
+        /// </summary>
+        /// <param name="name">标签名</param>
+        /// <returns>操作结果</returns>
+        Task<HttpClientResult<WXCreateTagResult, WXApiError>> CreateTagAsync(string name);
+
+        /// <summary>
+        /// 删除标签
+        /// </summary>
+        /// <param name="id">标签编号</param>
+        /// <returns>操作结果</returns>
+        Task<WXApiError?> DeleteTagAsync(long id);
+
+        /// <summary>
+        /// 获取标签列表
+        /// </summary>
+        /// <param name="saveStream">Save stream</param>
+        /// <returns>Task</returns>
+        Task GetTagListAsync(Stream saveStream);
+
+        /// <summary>
+        /// 获取所有用户
+        /// </summary>
+        /// <param name="nextOpenId">拉取列表的最后一个用户的OPENID，为空标识从头开始</param>
+        /// <returns>结果</returns>
+        Task<HttpClientResult<WXUserListResult, WXApiError>> GetUserListAsync(string? nextOpenId);
+
+        /// <summary>
+        /// 获取用户身上的标签列表
+        /// </summary>
+        /// <param name="openid">编号</param>
+        /// <returns>结果</returns>
+        Task<HttpClientResult<GetUserTagResult, WXApiError>> GetUserTagAsync(string openid);
+
+        /// <summary>
+        /// 获取标签下的所有用户
+        /// </summary>
+        /// <param name="tagId">标签编号</param>
+        /// <param name="nextOpenId">拉取列表的最后一个用户的OPENID，为空标识从头开始</param>
+        /// <returns>结果</returns>
+        Task<HttpClientResult<WXUserListResult, WXApiError>> GetTagUserListAsync(int tagId, string? nextOpenId);
+
+        /// <summary>
+        /// 编辑标签
+        /// </summary>
+        /// <param name="id">编号</param>
+        /// <param name="name">新标签名</param>
+        /// <returns>操作结果</returns>
+        Task<WXApiError?> UpdateTagAsync(long id, string name);
     }
 }

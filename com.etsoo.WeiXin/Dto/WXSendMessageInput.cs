@@ -17,6 +17,11 @@
     }
 
     /// <summary>
+    /// 发送消息的数据项目
+    /// </summary>
+    public record WXSendMessageDataItem(string Value, string? Color = null);
+
+    /// <summary>
     /// 发送的消息
     /// </summary>
     public class WXSendMessageInput
@@ -34,7 +39,7 @@
         /// <summary>
         /// 跳转网页时填写
         /// </summary>
-        public string Page { get; init; } = null!;
+        public string? Page { get; init; }
 
         /// <summary>
         /// 跳转小程序信息
@@ -44,6 +49,6 @@
         /// <summary>
         /// 模板内容
         /// </summary>
-        public Dictionary<string, string> Data { get; init; } = null!;
+        public Dictionary<string, WXSendMessageDataItem> Data { get; init; } = null!;
     }
 }
