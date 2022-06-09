@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\com.etsoo.WeiXinService\com.etsoo.WeiXinService.csproj" />
     <ProjectReference Include="..\com.etsoo.WeiXin\com.etsoo.WeiXin.csproj" />
   </ItemGroup>
 

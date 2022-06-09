@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "com.etsoo.WeiXin", "com.ets
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{E591C083-91C9-429D-95AF-5EC9E88E8590}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject1", "TestProject1\TestProject1.csproj", "{8775D452-6F02-4774-A029-AB2867322B2E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestProject1", "TestProject1\TestProject1.csproj", "{8775D452-6F02-4774-A029-AB2867322B2E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.etsoo.WeiXinService", "com.etsoo.WeiXinService\com.etsoo.WeiXinService.csproj", "{E406BC43-AE88-48D8-86E0-AE03BA80BCC8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{8775D452-6F02-4774-A029-AB2867322B2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8775D452-6F02-4774-A029-AB2867322B2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8775D452-6F02-4774-A029-AB2867322B2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E406BC43-AE88-48D8-86E0-AE03BA80BCC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E406BC43-AE88-48D8-86E0-AE03BA80BCC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E406BC43-AE88-48D8-86E0-AE03BA80BCC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E406BC43-AE88-48D8-86E0-AE03BA80BCC8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

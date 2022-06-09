@@ -1,4 +1,5 @@
 ﻿using com.etsoo.WeiXin;
+using Microsoft.Extensions.DependencyInjection;
 
 string? appData;
 do
@@ -17,8 +18,12 @@ if (parts.Length != 2)
 Console.WriteLine("正在处理...");
 Console.WriteLine("");
 
+var serviceCollection = new ServiceCollection().AddHttpClient();
+var serviceProvider = serviceCollection.BuildServiceProvider();
+var httpClientFactory = serviceProvider.GetService<IHttpClientFactory>()!;
+
 //using var httpClient = new HttpClient(new LoggingHandler(new HttpClientHandler()));
-using var httpClient = new HttpClient();
+using var httpClient = httpClientFactory.CreateClient();
 
 var client = new WXClient(httpClient, parts[0].Trim(), parts[1].Trim());
 
@@ -104,8 +109,9 @@ try
     */
 
     // var result = await client.GetTagUserListAsync(100, null);
-    // var result = await client.GetUserTagAsync("oCkMJj86v6J_auePAut2p0AIQy5s");
-    var result = await client.BatchUntagAsync(105, new[] { "oCkMJj86v6J_auePAut2p0AIQy5s" });
+    var tagRResult = await client.GetUserTagAsync("oCkMJj86v6J_auePAut2p0AIQy5s");
+    var result = tagRResult.Error;
+    //var result = await client.BatchUntagAsync(105, new[] { "oCkMJj86v6J_auePAut2p0AIQy5s" });
 
     // var result = await client.UpdateTagAsync(105, "接口服务");
     if (result is not null)

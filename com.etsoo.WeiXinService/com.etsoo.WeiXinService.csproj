@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	<SignAssembly>True</SignAssembly>
+	<AssemblyOriginatorKeyFile>..\etsoo.snk</AssemblyOriginatorKeyFile>
+	<Version>1.0.1</Version>
+	<Authors>ETSOO SmartERP NextGen Team</Authors>
+	<Company>ETSOO / 亿速思维</Company>
+	<Description>
+		WeChat API service support
+		微信应用服务支持
+	</Description>
+	<Copyright>Copyright © ETSOO 2004 - 2021</Copyright>
+	<PackageProjectUrl>https://www.etsoo.com/SmartERP/</PackageProjectUrl>
+	<PackageIcon>logo.png</PackageIcon>
+	<RepositoryUrl>https://github.com/ETSOO/com.etsoo.WeiXin</RepositoryUrl>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\logo.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>
