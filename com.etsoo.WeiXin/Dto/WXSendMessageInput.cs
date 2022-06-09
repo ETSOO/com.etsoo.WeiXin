@@ -3,18 +3,9 @@
     /// <summary>
     /// 发送消息的小程序信息
     /// </summary>
-    public class WXSendMiniprogram
-    {
-        /// <summary>
-        /// 程序编号
-        /// </summary>
-        public string Appid { get; init; } = null!;
-
-        /// <summary>
-        /// 跳转的路径
-        /// </summary>
-        public string Pagepath { get; init; } = null!;
-    }
+    /// <param name="Appid">程序编号</param>
+    /// <param name="Pagepath">跳转的路径</param>
+    public record WXSendMiniprogram(string Appid, string Pagepath);
 
     /// <summary>
     /// 发送消息的数据项目
@@ -24,12 +15,12 @@
     /// <summary>
     /// 发送的消息
     /// </summary>
-    public class WXSendMessageInput
+    public record WXSendMessageInput
     {
         /// <summary>
         /// 接收者（用户）的 openid
         /// </summary>
-        public string Touser { get; set; } = null!;
+        public string Touser { get; init; } = null!;
 
         /// <summary>
         /// 所需下发的订阅模板id
@@ -39,7 +30,7 @@
         /// <summary>
         /// 跳转网页时填写
         /// </summary>
-        public string? Page { get; set; }
+        public string? Page { get; init; }
 
         /// <summary>
         /// 跳转小程序信息
