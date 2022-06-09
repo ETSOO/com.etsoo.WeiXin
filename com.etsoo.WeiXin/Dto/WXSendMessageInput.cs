@@ -29,7 +29,7 @@
         /// <summary>
         /// 接收者（用户）的 openid
         /// </summary>
-        public string Touser { get; init; } = null!;
+        public string Touser { get; set; } = null!;
 
         /// <summary>
         /// 所需下发的订阅模板id
@@ -39,12 +39,12 @@
         /// <summary>
         /// 跳转网页时填写
         /// </summary>
-        public string? Page { get; init; }
+        public string? Page { get; set; }
 
         /// <summary>
         /// 跳转小程序信息
         /// </summary>
-        public WXSendMiniprogram? Miniprogram { get; init; }
+        public WXSendMiniprogram? Miniprogram { get; set; }
 
         /// <summary>
         /// 模板内容
