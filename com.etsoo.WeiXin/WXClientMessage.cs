@@ -54,7 +54,13 @@ namespace com.etsoo.WeiXin
             {
                 // 必须传递了消息签名，且定义了Encoding AES key
                 if (rq.MsgSignature == null || token == null || aesKey == null)
-                    return ParseMessageError(dic, "No token or AES key");
+                {
+                    var errorItems = new List<string>();
+                    if (rq.MsgSignature == null) errorItems.Add("Signature");
+                    if (token == null) errorItems.Add("Token");
+                    if (aesKey == null) errorItems.Add("AES Key");
+                    return ParseMessageError(dic, string.Join(", ", errorItems) + " required");
+                }
 
                 // 验证签名
                 var signData = new SortedSet<string>
