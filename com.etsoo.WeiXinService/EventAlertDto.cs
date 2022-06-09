@@ -29,6 +29,6 @@ namespace com.etsoo.WeiXinService
 
         [Required]
         [StringLength(30)]
-        public string Datetime { get; init; } = default!;
+        public DateTime Datetime { get; init; } = default!;
     }
 }
