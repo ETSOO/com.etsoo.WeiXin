@@ -56,7 +56,7 @@ namespace com.etsoo.WeiXin
                 if (rq.MsgSignature == null || token == null || aesKey == null)
                 {
                     var errorItems = new List<string>();
-                    if (rq.MsgSignature == null) errorItems.Add("Signature");
+                    if (rq.MsgSignature == null) errorItems.Add("Message signature");
                     if (token == null) errorItems.Add("Token");
                     if (aesKey == null) errorItems.Add("AES Key");
                     return ParseMessageError(dic, string.Join(", ", errorItems) + " required");

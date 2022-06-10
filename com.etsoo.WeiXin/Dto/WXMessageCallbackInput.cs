@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace com.etsoo.WeiXin.Dto
 {
@@ -15,31 +15,13 @@ namespace com.etsoo.WeiXin.Dto
         /// <summary>
         /// Encrypt type, aes
         /// </summary>
+        [FromQuery(Name = "encrypt_type")]
         public string? EncryptType { get; set; }
-
-        /// <summary>
-        /// Encrypt type in snake case
-        /// </summary>
-        [JsonPropertyName("encrypt_type")]
-        public string? EncryptTypeSnake
-        {
-            get { return EncryptType; }
-            set { EncryptType = value; }
-        }
 
         /// <summary>
         /// Message signature
         /// </summary>
+        [FromQuery(Name = "msg_signature")]
         public string? MsgSignature { get; set; }
-
-        /// <summary>
-        /// Message signature in snake case
-        /// </summary>
-        [JsonPropertyName("msg_signature")]
-        public string? MsgSignatureSnake
-        {
-            get { return MsgSignature; }
-            set { MsgSignature = value; }
-        }
     }
 }
