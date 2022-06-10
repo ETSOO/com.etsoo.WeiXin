@@ -14,7 +14,7 @@ namespace TestProject1
         readonly WXMessageCallbackInput rq = new("abc", "1409659813", "1372623149", "d2157f2f9079f4d6257b45edf665c43c62e60a0a")
         {
             EncryptType = "aes",
-            MsgSignatureSnake = "477715d11cdb4164915debcba66cb864d751f3e6"
+            MsgSignature = "477715d11cdb4164915debcba66cb864d751f3e6"
         };
 
 

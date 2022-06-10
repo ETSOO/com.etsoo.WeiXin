@@ -1,4 +1,6 @@
-﻿using com.etsoo.WeiXin;
+﻿using com.etsoo.Utils;
+using com.etsoo.WeiXin;
+using com.etsoo.WeiXin.Dto;
 using Microsoft.Extensions.DependencyInjection;
 
 string? appData;
@@ -9,7 +11,7 @@ do
 } while (string.IsNullOrEmpty(appData));
 
 var parts = appData.Split(';', StringSplitOptions.RemoveEmptyEntries);
-if (parts.Length != 2)
+if (parts.Length < 2)
 {
     Console.Write("*** 无法读取两个参数 ***");
     return;
@@ -25,7 +27,7 @@ var httpClientFactory = serviceProvider.GetService<IHttpClientFactory>()!;
 //using var httpClient = new HttpClient(new LoggingHandler(new HttpClientHandler()));
 using var httpClient = httpClientFactory.CreateClient();
 
-var client = new WXClient(httpClient, parts[0].Trim(), parts[1].Trim());
+var client = new WXClient(httpClient, parts[0].Trim(), parts[1].Trim(), parts.Length > 2 ? parts[2] : null, parts.Length > 3 ? parts[3] : null);
 
 try
 {
@@ -109,15 +111,27 @@ try
     */
 
     // var result = await client.GetTagUserListAsync(100, null);
-    var tagRResult = await client.GetUserTagAsync("oCkMJj86v6J_auePAut2p0AIQy5s");
-    var result = tagRResult.Error;
+    //var tagRResult = await client.GetUserTagAsync("oCkMJj86v6J_auePAut2p0AIQy5s");
+    //var result = tagRResult.Error;
     //var result = await client.BatchUntagAsync(105, new[] { "oCkMJj86v6J_auePAut2p0AIQy5s" });
 
     // var result = await client.UpdateTagAsync(105, "接口服务");
+    /*
     if (result is not null)
     {
         Console.WriteLine(result.Errmsg + $" - {result.Errcode}");
     }
+    */
+
+    var input = SharedUtils.GetStream(@"<xml>
+    <ToUserName><![CDATA[gh_d64e9c6d643e]]></ToUserName>
+    <Encrypt><![CDATA[ga8sB0nuW+ZKlzbjeE55Bv+AoYBZze66kUeziu9CQSdYeZ5K85xWFITtNiDtDbzaWzvRJ7YXSY/UFrUB5gMv9v7+VwxEQ5I4UOdhW/+w35PGHDA5kHRzR4qkqzSsI2eFZ8QVXUAucci1NQmNGZT4VrVzNur29vTgIbh6n9Yj3YV9MNKGjGf1piUHfvl89L9Mp2azV0Ic02AY3I1XedDDMW9/szLYFSn3FsqMM06js/mL6Pl5UIxNNEuLwVaC0Q9IBowLDA8dqLX7/3so0X2iJt1cxlCxkFbyHBcTKMtvsalbLfnRhR0KjMDxOf5OpUVhHrA7zJ2bbFiG9w64hz3CUWzKImU2yj6Sgm0R9rMvkC9NwMjwC2CWYVEQZk012fNN8Vb1f9uGfMTiP/aUj4WFuaW0ishidp7zKfR5zb/fWKo/lAZMfHygKk+eoKJUU48dy259FOvTaM4TyFg/cibXGa1xvLg0VBZIN/pHU/tNbG+XUE/UjyRRvQITrGAdexL8]]></Encrypt>
+</xml>");
+    var (message, _) = await client.ParseMessageAsync(input, new WXMessageCallbackInput("oCkMJj86v6J_auePAut2p0AIQy5s", "1654828071", "1987760958", "ef7903b97029f2c4cf6d72124f67efb1a1ca75bd")
+    {
+        EncryptType = "aes",
+        MsgSignature = "dfce480df44f4246ea9d81d2bd02731d6cea2bf4"
+    });
 }
 catch (Exception ex)
 {

@@ -1,6 +1,7 @@
 ﻿using com.etsoo.HTTP;
 using com.etsoo.Utils;
 using com.etsoo.Utils.Crypto;
+using com.etsoo.Utils.String;
 using com.etsoo.WeiXin.Dto;
 using com.etsoo.WeiXin.Message;
 using System.Xml;
@@ -69,12 +70,23 @@ namespace com.etsoo.WeiXin
                 };
                 var signResult = await WXUtils.CreateSignatureAsync(signData);
                 if (signResult != rq.MsgSignature)
-                    return ParseMessageError(dic, "Message signature not verified");
+                {
+                    var errorItems = new string[]
+                    {
+                        $"AppId: {StringUtils.HideData(AppId)}",
+                        $"Token: {StringUtils.HideData(token)}",
+                        $"Timestamp: {StringUtils.HideData(rq.Timestamp)}",
+                        $"Nonce: {StringUtils.HideData(rq.Nonce)}"
+                    };
+                    return ParseMessageError(dic, "Message signature not verified with " + string.Join(", ", errorItems));
+                }
 
                 // 解密
                 var bytes = await WXUtils.MessageDecryptAsync(encrypt, aesKey);
                 if (bytes == null)
-                    return ParseMessageError(dic, "Message decryption failed");
+                {
+                    return ParseMessageError(dic, "Message decryption failed with AES key: " + StringUtils.HideData(aesKey));
+                }
 
                 // 读取解密的第一层数据
                 dic = await XmlUtils.ParseXmlAsync(SharedUtils.GetStream(bytes));
