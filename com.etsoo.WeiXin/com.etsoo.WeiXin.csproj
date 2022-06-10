@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\etsoo.snk</AssemblyOriginatorKeyFile>
-    <Version>1.0.15</Version>
+    <Version>1.0.16</Version>
     <Authors>ETSOO SmartERP NextGen Team</Authors>
     <Company>ETSOO / 亿速思维</Company>
     <Description>WeChat server-side APIs support
@@ -28,7 +28,7 @@
 
   <ItemGroup>
     <PackageReference Include="com.etsoo.HTTP" Version="1.0.15" />
-    <PackageReference Include="com.etsoo.Utils" Version="1.1.25" />
+    <PackageReference Include="com.etsoo.Utils" Version="1.1.26" />
   </ItemGroup>
 
 </Project>

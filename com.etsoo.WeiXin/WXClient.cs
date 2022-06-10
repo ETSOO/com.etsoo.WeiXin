@@ -1,9 +1,9 @@
 ﻿using com.etsoo.HTTP;
 using com.etsoo.Utils;
 using com.etsoo.Utils.Crypto;
+using com.etsoo.Utils.Serialization;
 using com.etsoo.WeiXin.Dto;
 using com.etsoo.WeiXin.Message;
-using com.etsoo.WeiXin.Support;
 using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -56,11 +56,11 @@ namespace com.etsoo.WeiXin
         private static string? JsApiCardTicket;
         private static DateTime? JsApiCardTicketExpired;
 
-        // Json序列号选项
+        // Json序列号特例选项
         private static JsonSerializerOptions JsonOutOptions = new JsonSerializerOptions
         {
             WriteIndented = false,
-            PropertyNamingPolicy = new WXClientJsonNamingPolicy(),
+            PropertyNamingPolicy = new JsonSnakeNamingPolicy(),
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
         };
 
@@ -95,7 +95,7 @@ namespace com.etsoo.WeiXin
             this.token = token;
             this.aesKey = aesKey;
 
-            Options.PropertyNamingPolicy = new WXClientJsonNamingPolicy();
+            Options.PropertyNamingPolicy = new JsonSnakeNamingPolicy();
         }
 
         /// <summary>
