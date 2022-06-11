@@ -31,9 +31,10 @@ namespace com.etsoo.WeiXin
         /// </summary>
         /// <param name="data">Source data</param>
         /// <returns>Result</returns>
-        public static async Task<string> CreateSignatureAsync(SortedSet<string> data)
+        public static async Task<string> CreateSignatureAsync(IEnumerable<string> data)
         {
-            var source = string.Join(string.Empty, data);
+            var sorted = data.OrderBy((item) => item, new DictionarySort());
+            var source = string.Join(string.Empty, sorted);
             return await CreateSignatureAsync(source);
         }
 

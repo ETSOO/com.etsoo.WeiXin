@@ -143,7 +143,7 @@ namespace com.etsoo.WeiXin
         public async Task<string> CreateSignatureAsync(string timestamp, string nonce)
         {
             // Source
-            var data = new SortedSet<string>
+            var data = new[]
             {
                 token!,
                 timestamp,
@@ -203,7 +203,7 @@ namespace com.etsoo.WeiXin
         public async ValueTask<WXJsCardApiSignatureResult> CreateJsCardApiSignatureAsync(string cardId, string? code = null, decimal? balance = null, string? openid = null)
         {
             // Source data
-            var data = new SortedSet<string>();
+            var data = new List<string>();
             if (!string.IsNullOrEmpty(cardId)) data.Add(cardId);
             if (!string.IsNullOrEmpty(code)) data.Add(code);
             if (balance.HasValue) data.Add(balance.Value.ToString());

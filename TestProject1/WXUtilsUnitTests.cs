@@ -28,7 +28,7 @@ namespace TestProject1
         public async Task CreateSignatureAsyncDataTests()
         {
             // Arrange
-            var data = new SortedSet<string>
+            var data = new[]
             {
                 "1434008071",
                 "1404896688",

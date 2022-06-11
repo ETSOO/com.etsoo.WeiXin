@@ -64,10 +64,11 @@ namespace com.etsoo.WeiXin
                 }
 
                 // 验证签名
-                var signData = new SortedSet<string>
+                var signData = new[]
                 {
                     token, rq.Timestamp, rq.Nonce, encrypt
                 };
+
                 var signResult = await WXUtils.CreateSignatureAsync(signData);
                 if (signResult != rq.MsgSignature)
                 {
@@ -170,7 +171,7 @@ namespace com.etsoo.WeiXin
                 var nonce = CryptographyUtils.CreateRandString(RandStringKind.DigitAndLetter, 10).ToString();
                 var timestamp = SharedUtils.UTCToUnixSeconds().ToString();
 
-                var signData = new SortedSet<string>
+                var signData = new[]
                 {
                     token, timestamp, nonce, encrypt
                 };

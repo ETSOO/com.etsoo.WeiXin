@@ -125,13 +125,14 @@ try
 
     var input = SharedUtils.GetStream(@"<xml>
     <ToUserName><![CDATA[gh_d64e9c6d643e]]></ToUserName>
-    <Encrypt><![CDATA[ga8sB0nuW+ZKlzbjeE55Bv+AoYBZze66kUeziu9CQSdYeZ5K85xWFITtNiDtDbzaWzvRJ7YXSY/UFrUB5gMv9v7+VwxEQ5I4UOdhW/+w35PGHDA5kHRzR4qkqzSsI2eFZ8QVXUAucci1NQmNGZT4VrVzNur29vTgIbh6n9Yj3YV9MNKGjGf1piUHfvl89L9Mp2azV0Ic02AY3I1XedDDMW9/szLYFSn3FsqMM06js/mL6Pl5UIxNNEuLwVaC0Q9IBowLDA8dqLX7/3so0X2iJt1cxlCxkFbyHBcTKMtvsalbLfnRhR0KjMDxOf5OpUVhHrA7zJ2bbFiG9w64hz3CUWzKImU2yj6Sgm0R9rMvkC9NwMjwC2CWYVEQZk012fNN8Vb1f9uGfMTiP/aUj4WFuaW0ishidp7zKfR5zb/fWKo/lAZMfHygKk+eoKJUU48dy259FOvTaM4TyFg/cibXGa1xvLg0VBZIN/pHU/tNbG+XUE/UjyRRvQITrGAdexL8]]></Encrypt>
+    <Encrypt><![CDATA[LNLVS1D1P9Nq0DsnDKfz+G7J90+azyxWzV5wXAB7kK2cS0qG2AcKcrYbjepz80Ghs+CpjIkmP4oezp7/c9xFDNlDMBB5hnS2qIf3xHkLPMH+EbjoeQoU/rkzp+6AN9Iwxw1oPa4yaaqRN55kCr0D67S6pG62SkHvCw2i20vcFP1mh6HuSj5PkykILygQ2uQQ45lBsUtjJbZxXZYPmkg1iiuaQijvCxt6+tMvtc8Jl9SSmIBW69tUKDfLROyQ+KjEuGwS5nXUtqwWOhNlrmOh7mmvdsJeLBMInJCKL2nSYaLEKQKyEeDyoaxngKJJbCRLQfzB4kPMvLAjzBQf9Fg1U6JI2A/X2O9Ku4M9DvoSM4Iopkau1GBOA0DUUqWi+Vve5oBcP5C5ZoeqXkbCTAMJ3fSPLGl4yXWlJgPvNcS7QOrjwVtHHuCkc3Yl2+s6eSmGXJtWqUfgOy4FoiCDyzv6PJoeXgynYtgbENKhLiM8/6ZwehPc9MS9f00jOkipbBDk]]></Encrypt>
 </xml>");
-    var (message, _) = await client.ParseMessageAsync(input, new WXMessageCallbackInput("oCkMJj86v6J_auePAut2p0AIQy5s", "1654828071", "1987760958", "ef7903b97029f2c4cf6d72124f67efb1a1ca75bd")
+    var (message, _) = await client.ParseMessageAsync(input, new WXMessageCallbackInput("oCkMJj86v6J_auePAut2p0AIQy5s", "1654919238", "440811030", "15cc73c62f326cd0697ef6adb3424e36519e92c5")
     {
         EncryptType = "aes",
-        MsgSignature = "dfce480df44f4246ea9d81d2bd02731d6cea2bf4"
+        MsgSignature = "52e19e1860340e86627cfc42cd6fa9e942dbc627"
     });
+    Console.WriteLine(message);
 }
 catch (Exception ex)
 {
