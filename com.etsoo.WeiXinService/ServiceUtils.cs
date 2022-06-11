@@ -13,6 +13,17 @@ namespace com.etsoo.WeiXinService
     public static class ServiceUtils
     {
         /// <summary>
+        /// 到最大长度
+        /// </summary>
+        /// <param name="input">Input string</param>
+        /// <param name="maxLength">Max length</param>
+        /// <returns>Result</returns>
+        public static string ToMaxLength(this string input, int maxLength)
+        {
+            return input[..Math.Min(input.Length, maxLength)];
+        }
+
+        /// <summary>
         /// 服务接口地址
         /// </summary>
         public static string ServiceApi = "https://wechatapi.etsoo.com/api";
@@ -99,9 +110,6 @@ namespace com.etsoo.WeiXinService
         /// <returns>Response message</returns>
         public static async Task<HttpResponseMessage> SendLogAlertAsync(LogAlertDto data, HttpClient client)
         {
-            // 格式化时间
-            data.Datetime = FormatDateTime(data.Datetime);
-
             // 哈希
             var (json, signature) = await SerializeAsync(data);
             var signUrl = HttpUtility.UrlEncode(signature);
@@ -121,9 +129,6 @@ namespace com.etsoo.WeiXinService
         /// <returns>Response message</returns>
         public static async Task<HttpResponseMessage> SendEventAlertAsync(EventAlertDto data, HttpClient client)
         {
-            // 格式化时间
-            data.Datetime = FormatDateTime(data.Datetime);
-
             // 哈希
             var (json, signature) = await SerializeAsync(data);
             var signUrl = HttpUtility.UrlEncode(signature);

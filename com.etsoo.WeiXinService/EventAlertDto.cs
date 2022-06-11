@@ -6,28 +6,53 @@ namespace com.etsoo.WeiXinService
     /// Event Alert Dto
     /// 事件警报数据
     /// </summary>
-    public class EventAlertDto
+    public record EventAlertDto
     {
         [Required, MinLength(1), MaxLength(10)]
         public string[] Tokens { get; init; } = default!;
 
-        [Required]
-        [StringLength(256)]
-        public string Description { get; init; } = default!;
-
-        [Required]
-        [StringLength(20)]
-        public string Id { get; init; } = default!;
-
-        [Required]
-        [StringLength(30)]
-        public string Status { get; init; } = default!;
-
+        string description = default!;
         [Required]
         [StringLength(512)]
-        public string Remark { get; init; } = default!;
+        public string Description
+        {
+            get => description;
+            init => description = value.ToMaxLength(512);
+        }
 
+        string id = default!;
         [Required]
-        public DateTime Datetime { get; set; } = default!;
+        [StringLength(30)]
+        public string Id
+        {
+            get => id;
+            init => id = value.ToMaxLength(30);
+        }
+
+        string status = default!;
+        [Required]
+        [StringLength(30)]
+        public string Status
+        {
+            get => status;
+            init => status = value.ToMaxLength(30);
+        }
+
+        string remark = default!;
+        [Required]
+        [StringLength(256)]
+        public string Remark
+        {
+            get => remark;
+            init => remark = value.ToMaxLength(256);
+        }
+
+        DateTime datetime = default!;
+        [Required]
+        public DateTime Datetime
+        {
+            get => datetime;
+            init => datetime = ServiceUtils.FormatDateTime(value);
+        }
     }
 }

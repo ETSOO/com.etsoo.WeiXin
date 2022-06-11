@@ -15,6 +15,7 @@ namespace com.etsoo.WeiXin.Message
 
         /// <summary>
         /// 扫描结果，即二维码对应的字符串信息
+        /// 如果 ScanType = 'barcode'，返回 EAN_13, **** 形式
         /// </summary>
         public string ScanResult { get; init; } = null!;
     }

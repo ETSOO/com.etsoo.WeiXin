@@ -6,28 +6,53 @@ namespace com.etsoo.WeiXinService
     /// Log Alert Dto
     /// 日志警报数据
     /// </summary>
-    public class LogAlertDto
+    public record LogAlertDto
     {
         [Required, MinLength(1), MaxLength(10)]
         public string[] Tokens { get; init; } = default!;
 
+        string service = default!;
         [Required]
         [StringLength(30)]
-        public string Service { get; init; } = default!;
+        public string Service
+        {
+            get => service;
+            init => service = value.ToMaxLength(30);
+        }
 
+        string id = default!;
+        [Required]
+        [StringLength(30)]
+        public string Id
+        {
+            get => id;
+            init => id = value.ToMaxLength(30);
+        }
+
+        string level = default!;
         [Required]
         [StringLength(20)]
-        public string Id { get; init; } = default!;
+        public string Level
+        {
+            get => level;
+            init => level = value.ToMaxLength(20);
+        }
 
-        [Required]
-        [StringLength(20)]
-        public string Level { get; init; } = default!;
-
+        string message = default!;
         [Required]
         [StringLength(512)]
-        public string Message { get; init; } = default!;
+        public string Message
+        {
+            get => message;
+            init => message = value.ToMaxLength(512);
+        }
 
+        DateTime datetime = default!;
         [Required]
-        public DateTime Datetime { get; set; } = default!;
+        public DateTime Datetime
+        {
+            get => datetime;
+            init => datetime = ServiceUtils.FormatDateTime(value);
+        }
     }
 }
