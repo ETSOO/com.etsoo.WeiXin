@@ -1,4 +1,3 @@
-using com.etsoo.Utils;
 using com.etsoo.WeiXinService;
 using System.Net;
 
@@ -18,7 +17,7 @@ namespace TestProject1
                 Id = "123",
                 Level = "Warning",
                 Message = "Hello",
-                Datetime = SharedUtils.TruncateDateTime(DateTime.Now)
+                Datetime = DateTime.Now
             };
 
             ServiceUtils.ServiceApi = "https://localhost:7206/api";
@@ -40,7 +39,7 @@ namespace TestProject1
                 Description = "Description",
                 Status = "Status",
                 Remark = "Remark",
-                Datetime = SharedUtils.TruncateDateTime(DateTime.Now)
+                Datetime = DateTime.Now
             };
 
             using var client = new HttpClient();

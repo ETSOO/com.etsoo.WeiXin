@@ -28,6 +28,6 @@ namespace com.etsoo.WeiXinService
         public string Remark { get; init; } = default!;
 
         [Required]
-        public DateTime Datetime { get; init; } = default!;
+        public DateTime Datetime { get; set; } = default!;
     }
 }
