@@ -1,7 +1,6 @@
 using com.etsoo.Utils;
 using com.etsoo.WeiXinService;
 using System.Net;
-using System.Web;
 
 namespace TestProject1
 {
@@ -9,7 +8,7 @@ namespace TestProject1
     public class WXServiceUtilsTests
     {
         [TestMethod]
-        public async Task SendAsyncTests()
+        public async Task SendLogAlertAsyncTests()
         {
             // 发送的数据
             var data = new LogAlertDto
@@ -18,19 +17,36 @@ namespace TestProject1
                 Service = "Seq",
                 Id = "123",
                 Level = "Warning",
-                Message = "Hello, 亿速",
+                Message = "Hello",
                 Datetime = SharedUtils.TruncateDateTime(DateTime.Now)
             };
 
-            // 哈希
-            var (json, signature) = await ServiceUtils.SerializeAsync(data);
-            var signUrl = HttpUtility.UrlEncode(signature);
-
-            using var content = new StreamContent(json);
-            content.Headers.Add("Content-Type", "application/json");
+            ServiceUtils.ServiceApi = "https://localhost:7206/api";
 
             using var client = new HttpClient();
-            var response = await client.PostAsync("https://wechatapi.etsoo.com/api/Service/LogAlert/" + signUrl, content);
+            var response = await ServiceUtils.SendLogAlertAsync(data, client);
+
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [TestMethod]
+        public async Task SendEventAlertAsyncTests()
+        {
+            // 发送的数据
+            var data = new EventAlertDto
+            {
+                Tokens = new string[] { "Your Token" },
+                Id = "123",
+                Description = "Description",
+                Status = "Status",
+                Remark = "Remark",
+                Datetime = SharedUtils.TruncateDateTime(DateTime.Now)
+            };
+
+            using var client = new HttpClient();
+            var response = await ServiceUtils.SendEventAlertAsync(data, client);
+
+            var result = await response.Content.ReadAsStringAsync();
 
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }

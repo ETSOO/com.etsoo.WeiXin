@@ -1,5 +1,8 @@
-﻿using System.Security.Cryptography;
+﻿using System.Net.Http.Headers;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
+using System.Web;
 
 namespace com.etsoo.WeiXinService
 {
@@ -9,6 +12,11 @@ namespace com.etsoo.WeiXinService
     /// </summary>
     public static class ServiceUtils
     {
+        /// <summary>
+        /// 服务接口地址
+        /// </summary>
+        public static string ServiceApi = "https://wechatapi.etsoo.com/api";
+
         /// <summary>
         /// Json serialize/deserialize options
         /// Json序列化参数
@@ -51,6 +59,63 @@ namespace com.etsoo.WeiXinService
 
             // Return
             return (ms, sign);
+        }
+
+        /// <summary>
+        /// Create Json stream content
+        /// 创建Json流内容
+        /// </summary>
+        /// <param name="json">Json</param>
+        /// <returns>Content</returns>
+        public static HttpContent CreateJsonStreamContent(Stream json)
+        {
+            var content = new StreamContent(json);
+
+            var headerValue = new MediaTypeHeaderValue("application/json")
+            {
+                CharSet = Encoding.UTF8.WebName
+            };
+            content.Headers.ContentType = headerValue;
+
+            return content;
+        }
+
+        /// <summary>
+        /// 发送日志提醒
+        /// </summary>
+        /// <param name="data">Message data</param>
+        /// <param name="client">Client to send</param>
+        /// <returns>Response message</returns>
+        public static async Task<HttpResponseMessage> SendLogAlertAsync(LogAlertDto data, HttpClient client)
+        {
+            // 哈希
+            var (json, signature) = await SerializeAsync(data);
+            var signUrl = HttpUtility.UrlEncode(signature);
+
+            // 内容
+            using var content = CreateJsonStreamContent(json);
+
+            // 返回
+            return await client.PostAsync($"{ServiceApi}/Service/LogAlert/?signature={signUrl}", content);
+        }
+
+        /// <summary>
+        /// 发送事件提醒
+        /// </summary>
+        /// <param name="data">Message data</param>
+        /// <param name="client">Client to send</param>
+        /// <returns>Response message</returns>
+        public static async Task<HttpResponseMessage> SendEventAlertAsync(EventAlertDto data, HttpClient client)
+        {
+            // 哈希
+            var (json, signature) = await SerializeAsync(data);
+            var signUrl = HttpUtility.UrlEncode(signature);
+
+            // 内容
+            using var content = CreateJsonStreamContent(json);
+
+            // 返回
+            return await client.PostAsync($"{ServiceApi}/Service/EventAlert/?signature={signUrl}", content);
         }
     }
 }
