@@ -47,12 +47,16 @@ namespace com.etsoo.WeiXinService
             init => remark = value.ToMaxLength(256);
         }
 
-        DateTime datetime = default!;
+        string? url;
         [Required]
-        public DateTime Datetime
+        [StringLength(256)]
+        public string? Url
         {
-            get => datetime;
-            init => datetime = ServiceUtils.FormatDateTime(value);
+            get => url;
+            init => url = value?.ToMaxLength(256);
         }
+
+        [Required]
+        public DateTimeOffset Datetime { get; init; } = default!;
     }
 }

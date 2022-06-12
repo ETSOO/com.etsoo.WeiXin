@@ -28,9 +28,14 @@
         public string TemplateId { get; init; } = null!;
 
         /// <summary>
-        /// 跳转网页时填写
+        /// 订阅消息跳转网页时填写
         /// </summary>
         public string? Page { get; init; }
+
+        /// <summary>
+        /// 模板消息跳转网页是Url
+        /// </summary>
+        public string? Url { get; init; }
 
         /// <summary>
         /// 跳转小程序信息

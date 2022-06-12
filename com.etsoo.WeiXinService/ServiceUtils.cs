@@ -92,17 +92,6 @@ namespace com.etsoo.WeiXinService
         }
 
         /// <summary>
-        /// 格式化时间，删除秒数，UTC
-        /// </summary>
-        /// <param name="input">Input datetime</param>
-        /// <returns>Result</returns>
-        public static DateTime FormatDateTime(DateTime input)
-        {
-            input = input.ToUniversalTime();
-            return input.AddTicks(-(input.Ticks % TimeSpan.TicksPerSecond));
-        }
-
-        /// <summary>
         /// 发送日志提醒
         /// </summary>
         /// <param name="data">Message data</param>

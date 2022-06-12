@@ -47,12 +47,7 @@ namespace com.etsoo.WeiXinService
             init => message = value.ToMaxLength(512);
         }
 
-        DateTime datetime = default!;
         [Required]
-        public DateTime Datetime
-        {
-            get => datetime;
-            init => datetime = ServiceUtils.FormatDateTime(value);
-        }
+        public DateTimeOffset Datetime { get; init; } = default!;
     }
 }

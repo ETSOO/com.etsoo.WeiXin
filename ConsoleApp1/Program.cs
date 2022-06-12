@@ -1,7 +1,6 @@
-﻿using com.etsoo.Utils;
-using com.etsoo.WeiXin;
-using com.etsoo.WeiXin.Dto;
+﻿using com.etsoo.WeiXin;
 using Microsoft.Extensions.DependencyInjection;
+using System.Text.Json;
 
 string? appData;
 do
@@ -123,6 +122,7 @@ try
     }
     */
 
+    /*
     var input = SharedUtils.GetStream(@"<xml>
     <ToUserName><![CDATA[gh_d64e9c6d643e]]></ToUserName>
     <Encrypt><![CDATA[LNLVS1D1P9Nq0DsnDKfz+G7J90+azyxWzV5wXAB7kK2cS0qG2AcKcrYbjepz80Ghs+CpjIkmP4oezp7/c9xFDNlDMBB5hnS2qIf3xHkLPMH+EbjoeQoU/rkzp+6AN9Iwxw1oPa4yaaqRN55kCr0D67S6pG62SkHvCw2i20vcFP1mh6HuSj5PkykILygQ2uQQ45lBsUtjJbZxXZYPmkg1iiuaQijvCxt6+tMvtc8Jl9SSmIBW69tUKDfLROyQ+KjEuGwS5nXUtqwWOhNlrmOh7mmvdsJeLBMInJCKL2nSYaLEKQKyEeDyoaxngKJJbCRLQfzB4kPMvLAjzBQf9Fg1U6JI2A/X2O9Ku4M9DvoSM4Iopkau1GBOA0DUUqWi+Vve5oBcP5C5ZoeqXkbCTAMJ3fSPLGl4yXWlJgPvNcS7QOrjwVtHHuCkc3Yl2+s6eSmGXJtWqUfgOy4FoiCDyzv6PJoeXgynYtgbENKhLiM8/6ZwehPc9MS9f00jOkipbBDk]]></Encrypt>
@@ -133,6 +133,13 @@ try
         MsgSignature = "52e19e1860340e86627cfc42cd6fa9e942dbc627"
     });
     Console.WriteLine(message);
+    */
+
+    var d1 = JsonSerializer.Deserialize<Dictionary<string, DateTime>>("{\"a\": \"2022-06-11T11:28:13.6114593+08:00\"}");
+    var d2 = JsonSerializer.Deserialize<Dictionary<string, DateTimeOffset>>("{\"a\": \"2022-06-11T11:28:13.6114593+08:00\"}");
+
+    Console.WriteLine(JsonSerializer.Serialize(d1));
+    Console.WriteLine(JsonSerializer.Serialize(d2));
 }
 catch (Exception ex)
 {
