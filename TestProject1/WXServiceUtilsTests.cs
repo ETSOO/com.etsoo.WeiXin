@@ -12,6 +12,7 @@ namespace TestProject1
             // 发送的数据
             var data = new LogAlertDto
             {
+                Host = "Test",
                 Tokens = new string[] { "Your Token" },
                 Service = "Seq",
                 Id = "123",
@@ -34,6 +35,7 @@ namespace TestProject1
             // 发送的数据
             var data = new EventAlertDto
             {
+                Host = "Test",
                 Tokens = new string[] { "Your Token" },
                 Id = "123",
                 Description = "Description",

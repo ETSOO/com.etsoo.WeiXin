@@ -12,6 +12,7 @@ namespace TestProject1
             // Arrange
             var message = new LogAlertDto
             {
+                Host = "Test",
                 Tokens = new[] { "oCkMJj86v6J_auePAut2p0AIQy5s" },
                 Service = "Seq",
                 Id = "1234",
