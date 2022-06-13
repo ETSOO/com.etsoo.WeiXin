@@ -20,7 +20,7 @@ namespace TestProject1
                 Datetime = DateTime.Now
             };
 
-            ServiceUtils.ServiceApi = "https://localhost:7206/api";
+            // ServiceUtils.ServiceApi = "https://localhost:7206/api";
 
             using var client = new HttpClient();
             var response = await ServiceUtils.SendLogAlertAsync(data, client);

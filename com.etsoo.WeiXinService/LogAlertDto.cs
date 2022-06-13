@@ -8,6 +8,15 @@ namespace com.etsoo.WeiXinService
     /// </summary>
     public record LogAlertDto
     {
+        string host = default!;
+        [Required]
+        [StringLength(128)]
+        public string Host
+        {
+            get => host;
+            init => host = value.ToMaxLength(128);
+        }
+
         [Required, MinLength(1), MaxLength(10)]
         public string[] Tokens { get; init; } = default!;
 
