@@ -6,17 +6,17 @@
     <Nullable>enable</Nullable>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\etsoo.snk</AssemblyOriginatorKeyFile>
-    <Version>1.0.21</Version>
+    <Version>1.0.22</Version>
     <Authors>ETSOO SmartERP NextGen Team</Authors>
     <Company>ETSOO / 亿速思维</Company>
     <Description>WeChat server-side APIs support
 微信服务器端接口支持</Description>
-    <Copyright>Copyright © ETSOO 2004 - 2021</Copyright>
+    <Copyright>Copyright © ETSOO 2004 - 2022</Copyright>
     <PackageProjectUrl>https://www.etsoo.com/SmartERP/</PackageProjectUrl>
     <PackageIcon>logo.png</PackageIcon>
     <RepositoryUrl>https://github.com/ETSOO/com.etsoo.WeiXin</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	  <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,8 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="com.etsoo.HTTP" Version="1.0.16" />
-    <PackageReference Include="com.etsoo.Utils" Version="1.1.29" />
+    <PackageReference Include="com.etsoo.HTTP" Version="1.0.17" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
   </ItemGroup>
 
