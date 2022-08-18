@@ -6,11 +6,11 @@
     <Nullable>enable</Nullable>
 		<SignAssembly>True</SignAssembly>
 		<AssemblyOriginatorKeyFile>..\etsoo.snk</AssemblyOriginatorKeyFile>
-		<Version>1.0.9</Version>
+		<Version>1.0.10</Version>
 		<Authors>ETSOO SmartERP NextGen Team</Authors>
 		<Company>ETSOO / 亿速思维</Company>
 		<Description>WeChat API service support
-	微信应用服务支持</Description>
+微信应用服务支持</Description>
 		<Copyright>Copyright © ETSOO 2004 - 2022</Copyright>
 		<PackageProjectUrl>https://www.etsoo.com/SmartERP/</PackageProjectUrl>
 		<PackageIcon>logo.png</PackageIcon>
