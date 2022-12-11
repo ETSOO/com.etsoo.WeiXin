@@ -57,7 +57,7 @@ namespace com.etsoo.WeiXin
         private static DateTime? JsApiCardTicketExpired;
 
         // Json序列号特例选项
-        private static JsonSerializerOptions JsonOutOptions = new JsonSerializerOptions
+        private static readonly JsonSerializerOptions JsonOutOptions = new JsonSerializerOptions
         {
             WriteIndented = false,
             PropertyNamingPolicy = new JsonSnakeNamingPolicy(),
@@ -105,12 +105,12 @@ namespace com.etsoo.WeiXin
         /// <param name="client">Client</param>
         /// <param name="section">Configuration section</param>
         /// <param name="secureManager">Secure manager</param>
-        public WXClient(HttpClient client, IConfigurationSection section, Func<string, string>? secureManager = null)
+        public WXClient(HttpClient client, IConfigurationSection section, Func<string, string, string>? secureManager = null)
             : this(client
-                  , CryptographyUtils.UnsealData(section.GetValue<string>("AppId"), secureManager)
-                  , CryptographyUtils.UnsealData(section.GetValue<string>("AppSecret"), secureManager)
-                  , CryptographyUtils.UnsealData(section.GetValue<string>("Token"), secureManager)
-                  , CryptographyUtils.UnsealData(section.GetValue<string>("EncodingAESKey"), secureManager))
+                  , CryptographyUtils.UnsealData("AppId", section.GetValue<string>("AppId"), secureManager)
+                  , CryptographyUtils.UnsealData("AppSecret", section.GetValue<string>("AppSecret"), secureManager)
+                  , CryptographyUtils.UnsealData("Token", section.GetValue<string>("Token"), secureManager)
+                  , CryptographyUtils.UnsealData("EncodingAESKey", section.GetValue<string>("EncodingAESKey"), secureManager))
         {
 
         }
@@ -163,8 +163,10 @@ namespace com.etsoo.WeiXin
         public async ValueTask<WXJsApiSignatureResult> CreateJsApiSignatureAsync(string url)
         {
             // Source data
-            var data = new SortedDictionary<string, string>();
-            data["url"] = url;
+            var data = new SortedDictionary<string, string>
+            {
+                ["url"] = url
+            };
 
             // Nonce
             var nonce = CryptographyUtils.CreateRandString(RandStringKind.DigitAndLetter, 16).ToString();
