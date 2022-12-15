@@ -10,7 +10,13 @@ namespace TestProject1
     [TestClass]
     public class WXMessageUnitTests
     {
-        readonly WXClient client = new(new HttpClient(), "wx5823bf96d3bd56c7", "***", "QDG6eK", "jWmYm7qr5nMoAUwZRjGtBxmz3KA1tkAj3ykkR6q2B2C");
+        readonly WXClient client = new(new HttpClient(), new WXClientOptions
+        {
+            AppId = "wx5823bf96d3bd56c7",
+            AppSecret = "***",
+            Token = "QDG6eK",
+            EncodingAESKey = "jWmYm7qr5nMoAUwZRjGtBxmz3KA1tkAj3ykkR6q2B2C"
+        });
         readonly WXMessageCallbackInput rq = new("abc", "1409659813", "1372623149", "d2157f2f9079f4d6257b45edf665c43c62e60a0a")
         {
             EncryptType = "aes",

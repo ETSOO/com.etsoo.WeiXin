@@ -26,7 +26,14 @@ var httpClientFactory = serviceProvider.GetService<IHttpClientFactory>()!;
 //using var httpClient = new HttpClient(new LoggingHandler(new HttpClientHandler()));
 using var httpClient = httpClientFactory.CreateClient();
 
-var client = new WXClient(httpClient, parts[0].Trim(), parts[1].Trim(), parts.Length > 2 ? parts[2] : null, parts.Length > 3 ? parts[3] : null);
+var options = new WXClientOptions
+{
+    AppId = parts[0].Trim(),
+    AppSecret = parts[1].Trim(),
+    Token = parts.Length > 2 ? parts[2] : null,
+    EncodingAESKey = parts.Length > 3 ? parts[3] : null
+};
+var client = new WXClient(httpClient, options);
 
 try
 {

@@ -4,7 +4,7 @@ using com.etsoo.Utils.Crypto;
 using com.etsoo.Utils.Serialization;
 using com.etsoo.WeiXin.Dto;
 using com.etsoo.WeiXin.Message;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -57,7 +57,7 @@ namespace com.etsoo.WeiXin
         private static DateTime? JsApiCardTicketExpired;
 
         // Json序列号特例选项
-        private static readonly JsonSerializerOptions JsonOutOptions = new JsonSerializerOptions
+        private static readonly JsonSerializerOptions JsonOutOptions = new()
         {
             WriteIndented = false,
             PropertyNamingPolicy = new JsonSnakeNamingPolicy(),
@@ -84,16 +84,24 @@ namespace com.etsoo.WeiXin
         /// 构造函数
         /// </summary>
         /// <param name="client">Client</param>
-        /// <param name="appId">App id</param>
-        /// <param name="appSecret">App secret</param>
-        /// <param name="token">Token, used for signature check</param>
-        /// <param name="aesKey">Encoding AES key</param>
-        public WXClient(HttpClient client, string appId, string appSecret, string? token = null, string? aesKey = null) : base(client)
+        /// <param name="options">Options</param>
+        /// <param name="secureManager">Secure manager</param>
+        public WXClient(HttpClient client, WXClientOptions options, Func<string, string, string>? secureManager = null) : base(client)
         {
-            AppId = appId;
-            this.appSecret = appSecret;
-            this.token = token;
-            this.aesKey = aesKey;
+            if (secureManager == null)
+            {
+                AppId = options.AppId;
+                appSecret = options.AppSecret;
+                token = options.Token;
+                aesKey = options.EncodingAESKey;
+            }
+            else
+            {
+                AppId = CryptographyUtils.UnsealData("AppId", options.AppId, secureManager);
+                appSecret = CryptographyUtils.UnsealData("AppSecret", options.AppSecret, secureManager);
+                token = CryptographyUtils.UnsealData("Token", options.Token, secureManager);
+                aesKey = CryptographyUtils.UnsealData("EncodingAESKey", options.EncodingAESKey, secureManager);
+            }
 
             Options.PropertyNamingPolicy = new JsonSnakeNamingPolicy();
         }
@@ -105,14 +113,9 @@ namespace com.etsoo.WeiXin
         /// <param name="client">Client</param>
         /// <param name="section">Configuration section</param>
         /// <param name="secureManager">Secure manager</param>
-        public WXClient(HttpClient client, IConfigurationSection section, Func<string, string, string>? secureManager = null)
-            : this(client
-                  , CryptographyUtils.UnsealData("AppId", section.GetValue<string>("AppId"), secureManager)
-                  , CryptographyUtils.UnsealData("AppSecret", section.GetValue<string>("AppSecret"), secureManager)
-                  , CryptographyUtils.UnsealData("Token", section.GetValue<string>("Token"), secureManager)
-                  , CryptographyUtils.UnsealData("EncodingAESKey", section.GetValue<string>("EncodingAESKey"), secureManager))
+        public WXClient(HttpClient client, IOptions<WXClientOptions> options, Func<string, string, string>? secureManager = null)
+            : this(client, options.Value, secureManager)
         {
-
         }
 
         /// <summary>
