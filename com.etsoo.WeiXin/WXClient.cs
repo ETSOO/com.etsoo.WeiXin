@@ -4,6 +4,7 @@ using com.etsoo.Utils.Crypto;
 using com.etsoo.Utils.Serialization;
 using com.etsoo.WeiXin.Dto;
 using com.etsoo.WeiXin.Message;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -113,6 +114,7 @@ namespace com.etsoo.WeiXin
         /// <param name="client">Client</param>
         /// <param name="section">Configuration section</param>
         /// <param name="secureManager">Secure manager</param>
+        [ActivatorUtilitiesConstructor]
         public WXClient(HttpClient client, IOptions<WXClientOptions> options, Func<string, string, string>? secureManager = null)
             : this(client, options.Value, secureManager)
         {

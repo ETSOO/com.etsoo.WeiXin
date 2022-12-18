@@ -7,6 +7,12 @@
     public class WXClientOptions
     {
         /// <summary>
+        /// Name
+        /// 名称
+        /// </summary>
+        public const string Name = "WX";
+
+        /// <summary>
         /// Section name
         /// 配置区块名
         /// </summary>
