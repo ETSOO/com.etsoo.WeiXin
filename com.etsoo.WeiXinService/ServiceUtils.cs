@@ -26,7 +26,7 @@ namespace com.etsoo.WeiXinService
         /// <summary>
         /// 服务接口地址
         /// </summary>
-        public static string ServiceApi = "https://wechatapi.etsoo.com/api";
+        public static string ServiceApi { get; set; } = "https://wechatapi.etsoo.com/api";
 
         /// <summary>
         /// Json serialize/deserialize options
