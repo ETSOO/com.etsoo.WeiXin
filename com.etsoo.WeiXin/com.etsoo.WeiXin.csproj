@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\etsoo.snk</AssemblyOriginatorKeyFile>
-    <Version>1.0.27</Version>
+    <Version>1.0.28</Version>
     <Authors>ETSOO SmartERP NextGen Team</Authors>
     <Company>ETSOO / 亿速思维</Company>
     <Description>WeChat server-side APIs support
@@ -20,6 +20,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\logo.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
@@ -27,8 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="com.etsoo.HTTP" Version="1.0.29" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+    <PackageReference Include="com.etsoo.HTTP" Version="1.0.37" />
   </ItemGroup>
 
 </Project>
