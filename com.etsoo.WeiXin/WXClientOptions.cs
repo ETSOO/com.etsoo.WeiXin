@@ -22,13 +22,13 @@
         /// App id
         /// 程序编号
         /// </summary>
-        public string AppId { get; init; } = default!;
+        public required string AppId { get; init; }
 
         /// <summary>
         /// App secret
         /// 程序密钥
         /// </summary>
-        public string AppSecret { get; init; } = default!;
+        public required string AppSecret { get; init; }
 
         /// <summary>
         /// Token, used for signature check

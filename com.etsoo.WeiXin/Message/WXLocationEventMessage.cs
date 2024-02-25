@@ -1,4 +1,5 @@
 ﻿using com.etsoo.Utils;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
 
 namespace com.etsoo.WeiXin.Message
@@ -17,17 +18,17 @@ namespace com.etsoo.WeiXin.Message
         /// <summary>
         /// 地理位置纬度
         /// </summary>
-        public decimal Latitude { get; init; }
+        public required decimal Latitude { get; init; }
 
         /// <summary>
         /// 地理位置经度
         /// </summary>
-        public decimal Longitude { get; init; }
+        public required decimal Longitude { get; init; }
 
         /// <summary>
         /// 地理位置精度
         /// </summary>
-        public decimal Precision { get; init; }
+        public required decimal Precision { get; init; }
 
         /// <summary>
         /// 构造函数
@@ -41,14 +42,12 @@ namespace com.etsoo.WeiXin.Message
         /// 构造函数
         /// </summary>
         /// <param name="dic">字典数据</param>
+        [SetsRequiredMembers]
         public WXLocationEventMessage(Dictionary<string, string> dic) : base(dic)
         {
-            if (dic is not null)
-            {
-                Latitude = XmlUtils.GetValue<decimal>(dic, "Latitude").GetValueOrDefault();
-                Longitude = XmlUtils.GetValue<decimal>(dic, "Longitude").GetValueOrDefault();
-                Precision = XmlUtils.GetValue<decimal>(dic, "Precision").GetValueOrDefault();
-            }
+            Latitude = XmlUtils.GetValue<decimal>(dic, "Latitude").GetValueOrDefault();
+            Longitude = XmlUtils.GetValue<decimal>(dic, "Longitude").GetValueOrDefault();
+            Precision = XmlUtils.GetValue<decimal>(dic, "Precision").GetValueOrDefault();
         }
     }
 }

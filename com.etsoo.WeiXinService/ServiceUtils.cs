@@ -2,6 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 using System.Web;
 
 namespace com.etsoo.WeiXinService
@@ -29,22 +30,17 @@ namespace com.etsoo.WeiXinService
         public static string ServiceApi { get; set; } = "https://wechatapi.etsoo.com/api";
 
         /// <summary>
-        /// Json serialize/deserialize options
-        /// Json序列化参数
-        /// </summary>
-        public static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
-
-        /// <summary>
         /// Async check message signature
         /// 异步验证消息签名
         /// </summary>
         /// <typeparam name="T">Generic message type</typeparam>
         /// <param name="message">Message</param>
         /// <param name="signature">Signature to check</param>
+        /// <param name="typeInfo">Json type info</param>
         /// <returns>Result</returns>
-        public static async Task<bool> CheckSignatureAsync<T>(T message, string signature)
+        public static async Task<bool> CheckSignatureAsync<T>(T message, string signature, JsonTypeInfo<T> typeInfo, CancellationToken cancellationToken = default)
         {
-            var (_, signatureNew) = await SerializeAsync(message);
+            var (_, signatureNew) = await SerializeAsync(message, typeInfo, cancellationToken);
             return signatureNew.Equals(signature);
         }
 
@@ -54,17 +50,18 @@ namespace com.etsoo.WeiXinService
         /// </summary>
         /// <typeparam name="T">Generic message type</typeparam>
         /// <param name="message">Message</param>
+        /// <param name="typeInfo">Json type info</param>
         /// <returns>Json & signature</returns>
-        public static async Task<(Stream json, string signature)> SerializeAsync<T>(T message)
+        public static async Task<(Stream json, string signature)> SerializeAsync<T>(T message, JsonTypeInfo<T> typeInfo, CancellationToken cancellationToken = default)
         {
             // Json
             var ms = new MemoryStream();
-            await JsonSerializer.SerializeAsync(ms, message, JsonOptions);
+            await JsonSerializer.SerializeAsync(ms, message, typeInfo, cancellationToken);
             ms.Position = 0;
 
             // Signature
             using var sha = SHA256.Create();
-            var shaBytes = await sha.ComputeHashAsync(ms);
+            var shaBytes = await sha.ComputeHashAsync(ms, cancellationToken);
             var sign = Convert.ToBase64String(shaBytes);
             ms.Position = 0;
 
@@ -97,17 +94,17 @@ namespace com.etsoo.WeiXinService
         /// <param name="data">Message data</param>
         /// <param name="client">Client to send</param>
         /// <returns>Response message</returns>
-        public static async Task<HttpResponseMessage> SendLogAlertAsync(LogAlertDto data, HttpClient client)
+        public static async Task<HttpResponseMessage> SendLogAlertAsync(LogAlertDto data, HttpClient client, CancellationToken cancellationToken = default)
         {
             // 哈希
-            var (json, signature) = await SerializeAsync(data);
+            var (json, signature) = await SerializeAsync(data, WXServiceJsonSerializerContext.Default.LogAlertDto, cancellationToken);
             var signUrl = HttpUtility.UrlEncode(signature);
 
             // 内容
             using var content = CreateJsonStreamContent(json);
 
             // 返回
-            return await client.PostAsync($"{ServiceApi}/Service/LogAlert/?signature={signUrl}", content);
+            return await client.PostAsync($"{ServiceApi}/Service/LogAlert/?signature={signUrl}", content, cancellationToken);
         }
 
         /// <summary>
@@ -116,17 +113,17 @@ namespace com.etsoo.WeiXinService
         /// <param name="data">Message data</param>
         /// <param name="client">Client to send</param>
         /// <returns>Response message</returns>
-        public static async Task<HttpResponseMessage> SendEventAlertAsync(EventAlertDto data, HttpClient client)
+        public static async Task<HttpResponseMessage> SendEventAlertAsync(EventAlertDto data, HttpClient client, CancellationToken cancellationToken = default)
         {
             // 哈希
-            var (json, signature) = await SerializeAsync(data);
+            var (json, signature) = await SerializeAsync(data, WXServiceJsonSerializerContext.Default.EventAlertDto, cancellationToken);
             var signUrl = HttpUtility.UrlEncode(signature);
 
             // 内容
             using var content = CreateJsonStreamContent(json);
 
             // 返回
-            return await client.PostAsync($"{ServiceApi}/Service/EventAlert/?signature={signUrl}", content);
+            return await client.PostAsync($"{ServiceApi}/Service/EventAlert/?signature={signUrl}", content, cancellationToken);
         }
     }
 }

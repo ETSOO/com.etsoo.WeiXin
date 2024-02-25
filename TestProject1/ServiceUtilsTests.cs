@@ -13,7 +13,7 @@ namespace TestProject1
             var message = new LogAlertDto
             {
                 Host = "Test",
-                Tokens = new[] { "oCkMJj86v6J_auePAut2p0AIQy5s" },
+                Tokens = ["oCkMJj86v6J_auePAut2p0AIQy5s"],
                 Service = "Seq",
                 Id = "1234",
                 Level ="Error",
@@ -22,10 +22,12 @@ namespace TestProject1
             };
 
             // Act
-            var (ms, signature) = await ServiceUtils.SerializeAsync(message);
+            var (ms, signature) = await ServiceUtils.SerializeAsync(message, WXServiceJsonSerializerContext.Default.LogAlertDto);
 
-            var newMessage = await JsonSerializer.DeserializeAsync<LogAlertDto>(ms, ServiceUtils.JsonOptions);
-            var result = await ServiceUtils.CheckSignatureAsync(newMessage, signature);
+            var newMessage = await JsonSerializer.DeserializeAsync(ms, WXServiceJsonSerializerContext.Default.LogAlertDto);
+            Assert.IsNotNull(newMessage);
+
+            var result = await ServiceUtils.CheckSignatureAsync(newMessage, signature, WXServiceJsonSerializerContext.Default.LogAlertDto);
 
             // Assert
             Assert.IsTrue(result);

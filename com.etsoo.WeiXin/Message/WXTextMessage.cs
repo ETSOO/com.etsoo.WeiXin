@@ -1,4 +1,5 @@
 ﻿using com.etsoo.Utils;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -30,7 +31,7 @@ namespace com.etsoo.WeiXin.Message
         /// <summary>
         /// 文本消息内容
         /// </summary>
-        public string Content { get; init; } = null!;
+        public required string Content { get; init; }
 
         /// <summary>
         /// 构造函数
@@ -43,12 +44,10 @@ namespace com.etsoo.WeiXin.Message
         /// 构造函数
         /// </summary>
         /// <param name="dic">字典数据</param>
+        [SetsRequiredMembers]
         public WXTextMessage(Dictionary<string, string> dic) : base(dic)
         {
-            if (dic is not null)
-            {
-                Content = dic["Content"];
-            }
+            Content = dic["Content"];
         }
     }
 }

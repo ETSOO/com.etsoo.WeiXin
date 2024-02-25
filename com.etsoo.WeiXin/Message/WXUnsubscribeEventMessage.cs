@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Xml.Serialization;
 
 namespace com.etsoo.WeiXin.Message
 {
@@ -24,11 +25,9 @@ namespace com.etsoo.WeiXin.Message
         /// 构造函数
         /// </summary>
         /// <param name="dic">字典数据</param>
+        [SetsRequiredMembers]
         public WXUnsubscribeEventMessage(Dictionary<string, string> dic) : base(dic)
         {
-            if (dic is not null)
-            {
-            }
         }
     }
 }

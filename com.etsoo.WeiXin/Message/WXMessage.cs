@@ -1,4 +1,5 @@
 ﻿using com.etsoo.Utils;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -17,17 +18,17 @@ namespace com.etsoo.WeiXin.Message
         /// <summary>
         /// 接收方账号
         /// </summary>
-        public string ToUserName { get; init; } = null!;
+        public required string ToUserName { get; init; }
 
         /// <summary>
         /// 发送方帐号（一个OpenID）
         /// </summary>
-        public string FromUserName { get; init; } = null!;
+        public required string FromUserName { get; init; }
 
         /// <summary>
         /// 消息创建时间Unix毫秒数
         /// </summary>
-        public long CreateTime { get; init; }
+        public required long CreateTime { get; init; }
 
         /// <summary>
         /// 消息创建时间
@@ -38,15 +39,20 @@ namespace com.etsoo.WeiXin.Message
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="dic">字典数据</param>
-        public WXMessage(Dictionary<string, string>? dic = null)
+        public WXMessage()
         {
-            if (dic is not null)
-            {
-                ToUserName = dic["ToUserName"];
-                FromUserName = dic["FromUserName"];
-                CreateTime = long.Parse(dic["CreateTime"]);
-            }
+        }
+
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="dic">字典数据</param>
+        [SetsRequiredMembers]
+        public WXMessage(Dictionary<string, string> dic)
+        {
+            ToUserName = dic["ToUserName"];
+            FromUserName = dic["FromUserName"];
+            CreateTime = long.Parse(dic["CreateTime"]);
         }
 
         /// <summary>
@@ -94,15 +100,20 @@ namespace com.etsoo.WeiXin.Message
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="dic">字典数据</param>
-        public WXNormalMessage(Dictionary<string, string>? dic = null) : base(dic)
+        public WXNormalMessage() : base()
         {
-            if (dic is not null)
-            {
-                MsgId = XmlUtils.GetValue<long>(dic, "MsgId").GetValueOrDefault();
-                MsgDataId = XmlUtils.GetValue(dic, "MsgDataId");
-                Idx = XmlUtils.GetValue<int>(dic, "Idx");
-            }
+        }
+
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="dic">字典数据</param>
+        [SetsRequiredMembers]
+        public WXNormalMessage(Dictionary<string, string> dic) : base(dic)
+        {
+            MsgId = XmlUtils.GetValue<long>(dic, "MsgId").GetValueOrDefault();
+            MsgDataId = XmlUtils.GetValue(dic, "MsgDataId");
+            Idx = XmlUtils.GetValue<int>(dic, "Idx");
         }
     }
 }

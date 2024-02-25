@@ -1,10 +1,13 @@
-﻿namespace com.etsoo.WeiXin.Dto
+﻿using System.Text.Json.Serialization;
+
+namespace com.etsoo.WeiXin.Dto
 {
     /// <summary>
     /// WeiXin Api Error
     /// 微信接口错误
     /// </summary>
-    public class WXApiError
+    [JsonDerivedType(typeof(WXJsApiTokenResult))]
+    public record WXApiError
     {
         /// <summary>
         /// Error code
@@ -16,6 +19,6 @@
         /// Error message
         /// 错误信息
         /// </summary>
-        public string Errmsg { get; init; } = null!;
+        public required string Errmsg { get; init; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using com.etsoo.Utils;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -35,12 +36,12 @@ namespace com.etsoo.WeiXin.Message
         /// <summary>
         /// 图片链接（由系统生成）
         /// </summary>
-        public string PicUrl { get; init; } = null!;
+        public required string PicUrl { get; init; }
 
         /// <summary>
         /// 图片消息媒体id，可以调用获取临时素材接口拉取数据
         /// </summary>
-        public string MediaId { get; init; } = null!;
+        public required string MediaId { get; init; }
 
         /// <summary>
         /// 构造函数
@@ -53,13 +54,11 @@ namespace com.etsoo.WeiXin.Message
         /// 构造函数
         /// </summary>
         /// <param name="dic">字典数据</param>
+        [SetsRequiredMembers]
         public WXImageMessage(Dictionary<string, string> dic) : base(dic)
         {
-            if (dic is not null)
-            {
-                PicUrl = dic["PicUrl"];
-                MediaId = dic["MediaId"];
-            }
+            PicUrl = dic["PicUrl"];
+            MediaId = dic["MediaId"];
         }
     }
 }

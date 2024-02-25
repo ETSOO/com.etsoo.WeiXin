@@ -1,4 +1,5 @@
 ﻿using com.etsoo.Utils;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
 
 namespace com.etsoo.WeiXin.Message
@@ -23,7 +24,7 @@ namespace com.etsoo.WeiXin.Message
         /// 场景值
         /// </summary>
         [XmlIgnore]
-        public string? SceneId => EventKey != null && EventKey.StartsWith("qrscene_") ? EventKey.Substring(8) : null;
+        public string? SceneId => EventKey != null && EventKey.StartsWith("qrscene_") ? EventKey[8..] : null;
 
         /// <summary>
         /// 二维码的ticket，可用来换取二维码图片
@@ -42,13 +43,11 @@ namespace com.etsoo.WeiXin.Message
         /// 构造函数
         /// </summary>
         /// <param name="dic">字典数据</param>
+        [SetsRequiredMembers]
         public WXSubscribeEventMessage(Dictionary<string, string> dic) : base(dic)
         {
-            if (dic is not null)
-            {
-                EventKey = XmlUtils.GetValue(dic, "EventKey");
-                Ticket = XmlUtils.GetValue(dic, "Ticket");
-            }
+            EventKey = XmlUtils.GetValue(dic, "EventKey");
+            Ticket = XmlUtils.GetValue(dic, "Ticket");
         }
     }
 }

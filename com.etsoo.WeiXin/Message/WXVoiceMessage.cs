@@ -1,4 +1,5 @@
 ﻿using com.etsoo.Utils;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -35,12 +36,12 @@ namespace com.etsoo.WeiXin.Message
         /// <summary>
         /// 语音格式，如amr，speex等
         /// </summary>
-        public string Format { get; init; } = null!;
+        public required string Format { get; init; }
 
         /// <summary>
         /// 语音消息媒体id，可以调用获取临时素材接口拉取数据
         /// </summary>
-        public string MediaId { get; init; } = null!;
+        public required string MediaId { get; init; }
 
         /// <summary>
         /// 通语音识别后，用户每次发送语音给公众号时，微信会在推送的语音消息 XML 数据包中，增加一个 Recognition 字段
@@ -58,14 +59,12 @@ namespace com.etsoo.WeiXin.Message
         /// 构造函数
         /// </summary>
         /// <param name="dic">字典数据</param>
+        [SetsRequiredMembers]
         public WXVoiceMessage(Dictionary<string, string> dic) : base(dic)
         {
-            if (dic is not null)
-            {
-                Format = dic["Format"];
-                MediaId = dic["MediaId"];
-                Recognition = XmlUtils.GetValue(dic, "Recognition");
-            }
+            Format = dic["Format"];
+            MediaId = dic["MediaId"];
+            Recognition = XmlUtils.GetValue(dic, "Recognition");
         }
     }
 }

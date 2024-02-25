@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Xml.Serialization;
 
 namespace com.etsoo.WeiXin.Message
 {
@@ -16,7 +17,7 @@ namespace com.etsoo.WeiXin.Message
         /// <summary>
         /// 事件 KEY 值，与自定义菜单接口中 KEY 值对应
         /// </summary>
-        public string EventKey { get; init; } = null!;
+        public required string EventKey { get; init; }
 
         /// <summary>
         /// 构造函数
@@ -30,12 +31,10 @@ namespace com.etsoo.WeiXin.Message
         /// 构造函数
         /// </summary>
         /// <param name="dic">字典数据</param>
+        [SetsRequiredMembers]
         public WXClickEventMessage(Dictionary<string, string> dic) : base(dic)
         {
-            if (dic is not null)
-            {
-                EventKey = dic["EventKey"];
-            }
+            EventKey = dic["EventKey"];
         }
     }
 }

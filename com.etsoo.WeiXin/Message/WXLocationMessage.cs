@@ -1,4 +1,5 @@
 ﻿using com.etsoo.Utils;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
 
 namespace com.etsoo.WeiXin.Message
@@ -18,23 +19,23 @@ namespace com.etsoo.WeiXin.Message
         /// 地理位置纬度
         /// </summary>
         [XmlElement(ElementName = "Location_X")]
-        public decimal LocationX { get; init; }
+        public required decimal LocationX { get; init; }
 
         /// <summary>
         /// 地理位置经度
         /// </summary>
         [XmlElement(ElementName = "Location_Y")]
-        public decimal LocationY { get; init; }
+        public required decimal LocationY { get; init; }
 
         /// <summary>
         /// 地图缩放大小
         /// </summary>
-        public int Scale { get; init; }
+        public required int Scale { get; init; }
 
         /// <summary>
         /// 地理位置信息
         /// </summary>
-        public string Label { get; init; } = null!;
+        public required string Label { get; init; }
 
         /// <summary>
         /// 构造函数
@@ -47,15 +48,13 @@ namespace com.etsoo.WeiXin.Message
         /// 构造函数
         /// </summary>
         /// <param name="dic">字典数据</param>
+        [SetsRequiredMembers]
         public WXLocationMessage(Dictionary<string, string> dic) : base(dic)
         {
-            if (dic is not null)
-            {
-                LocationX = XmlUtils.GetValue<decimal>(dic, "Location_X").GetValueOrDefault();
-                LocationY = XmlUtils.GetValue<decimal>(dic, "Location_Y").GetValueOrDefault();
-                Scale = XmlUtils.GetValue<int>(dic, "Scale").GetValueOrDefault();
-                Label = dic["Label"];
-            }
+            LocationX = XmlUtils.GetValue<decimal>(dic, "Location_X").GetValueOrDefault();
+            LocationY = XmlUtils.GetValue<decimal>(dic, "Location_Y").GetValueOrDefault();
+            Scale = XmlUtils.GetValue<int>(dic, "Scale").GetValueOrDefault();
+            Label = dic["Label"];
         }
     }
 }

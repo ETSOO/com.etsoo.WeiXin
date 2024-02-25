@@ -1,4 +1,5 @@
 ﻿using com.etsoo.Utils;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
 
 namespace com.etsoo.WeiXin.Message
@@ -12,12 +13,12 @@ namespace com.etsoo.WeiXin.Message
         /// <summary>
         /// 模板 id
         /// </summary>
-        public string TemplateId { get; init; } = null!;
+        public required string TemplateId { get; init; }
 
         /// <summary>
         /// 用户点击行为（仅推送用户拒收/reject通知）
         /// </summary>
-        public string SubscribeStatusString { get; init; } = null!;
+        public required string SubscribeStatusString { get; init; }
     }
 
     /// <summary>
@@ -34,7 +35,7 @@ namespace com.etsoo.WeiXin.Message
         /// <summary>
         /// 细节
         /// </summary>
-        public WXSubscribeManageEventItem[] SubscribeMsgChangeEvent { get; init; } = null!;
+        public required WXSubscribeManageEventItem[] SubscribeMsgChangeEvent { get; init; }
 
         /// <summary>
         /// 构造函数
@@ -48,16 +49,14 @@ namespace com.etsoo.WeiXin.Message
         /// 构造函数
         /// </summary>
         /// <param name="dic">字典数据</param>
+        [SetsRequiredMembers]
         public WXSubscribeManageEventMessage(Dictionary<string, string> dic) : base(dic)
         {
-            if (dic is not null)
+            SubscribeMsgChangeEvent = XmlUtils.GetList(dic["SubscribeMsgChangeEvent"]).Select(item => new WXSubscribeManageEventItem
             {
-                SubscribeMsgChangeEvent = XmlUtils.GetList(dic["SubscribeMsgChangeEvent"]).Select(item => new WXSubscribeManageEventItem
-                {
-                    TemplateId = item["TemplateId"],
-                    SubscribeStatusString = item["SubscribeStatusString"]
-                }).ToArray();
-            }
+                TemplateId = item["TemplateId"],
+                SubscribeStatusString = item["SubscribeStatusString"]
+            }).ToArray();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Xml.Serialization;
 
 namespace com.etsoo.WeiXin.Message
 {
@@ -16,12 +17,12 @@ namespace com.etsoo.WeiXin.Message
         /// <summary>
         /// 事件 KEY 值，是一个32位无符号整数，即创建二维码时的二维码scene_id
         /// </summary>
-        public string EventKey { get; init; } = null!;
+        public required string EventKey { get; init; }
 
         /// <summary>
         /// 二维码的ticket，可用来换取二维码图片
         /// </summary>
-        public string Ticket { get; init; } = null!;
+        public required string Ticket { get; init; }
 
         /// <summary>
         /// 构造函数
@@ -35,13 +36,11 @@ namespace com.etsoo.WeiXin.Message
         /// 构造函数
         /// </summary>
         /// <param name="dic">字典数据</param>
+        [SetsRequiredMembers]
         public WXScanEventMessage(Dictionary<string, string> dic) : base(dic)
         {
-            if (dic is not null)
-            {
-                EventKey = dic["EventKey"];
-                Ticket = dic["Ticket"];
-            }
+            EventKey = dic["EventKey"];
+            Ticket = dic["Ticket"];
         }
     }
 }

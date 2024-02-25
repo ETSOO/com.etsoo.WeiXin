@@ -15,15 +15,17 @@ namespace com.etsoo.WeiXin
         /// 创建个性化自定义菜单
         /// </summary>
         /// <param name="json">菜单Json定义</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>操作结果</returns>
-        Task<WXApiError?> CreateConditionalMenuAsync(string json);
+        Task<WXApiError?> CreateConditionalMenuAsync(string json, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 创建自定义菜单
         /// </summary>
         /// <param name="json">菜单Json定义</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>操作结果</returns>
-        Task<WXApiError?> CreateMenuAsync(string json);
+        Task<WXApiError?> CreateMenuAsync(string json, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Check signature
@@ -66,58 +68,65 @@ namespace com.etsoo.WeiXin
         /// </summary>
         /// <param name="mediaId">Media id</param>
         /// <param name="saveStream">Save stream</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Task</returns>
-        Task<string> DownloadMediaAsync(string mediaId, Stream saveStream);
+        Task<string> DownloadMediaAsync(string mediaId, Stream saveStream, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Get Access Token
         /// 获取访问凭据
         /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Result</returns>
         /// <exception cref="WXClientException"></exception>
-        ValueTask<string> GetAcessTokenAsync();
+        ValueTask<string> GetAcessTokenAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Get Js API ticket
         /// 获取脚本接口凭证
         /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Result</returns>
         /// <exception cref="NullReferenceException"></exception>
         /// <exception cref="WXClientException"></exception>
-        ValueTask<string> GetJsApiTicketAsync();
+        ValueTask<string> GetJsApiTicketAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Get Js API Card ticket
         /// 获取脚本卡券接口凭证
         /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Result</returns>
         /// <exception cref="NullReferenceException"></exception>
         /// <exception cref="WXClientException"></exception>
-        ValueTask<string> GetJsApiCardTicketAsync();
+        ValueTask<string> GetJsApiCardTicketAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Get subscribe template list
         /// 获取订阅模板列表
         /// </summary>
         /// <param name="saveStream">Save stream</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Task</returns>
-        Task GetSubscribeTemplateListAsync(Stream saveStream);
+        Task GetSubscribeTemplateListAsync(Stream saveStream, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Get template list
         /// 获取模板列表
         /// </summary>
         /// <param name="saveStream">Save stream</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Task</returns>
-        Task GetTemplateListAsync(Stream saveStream);
+        Task GetTemplateListAsync(Stream saveStream, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Get custom menu
         /// 获取自定义菜单
         /// </summary>
         /// <param name="saveStream">Save stream</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Task</returns>
-        Task GetMenuAsync(Stream saveStream);
+        Task GetMenuAsync(Stream saveStream, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Parse message
@@ -152,81 +161,102 @@ namespace com.etsoo.WeiXin
         /// 发送订阅通知
         /// </summary>
         /// <param name="input">输入的信息</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>操作结果</returns>
-        Task<WXApiError?> SendSubscribeMessageAsync(WXSendMessageInput input);
+        Task<WXApiError?> SendSubscribeMessageAsync(WXSendMessageInput input, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 发送模板消息
         /// </summary>
         /// <param name="input">输入的信息</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>操作结果</returns>
-        Task<WXApiError?> SendTemplateMessageAsync(WXSendMessageInput input);
+        Task<WXApiError?> SendTemplateMessageAsync(WXSendMessageInput input, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 批量为用户打标签
         /// </summary>
         /// <param name="tagId">标签编号</param>
         /// <param name="openids">粉丝编号</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>结果</returns>
-        Task<WXApiError?> BatchTagAsync(int tagId, IEnumerable<string> openids);
+        Task<WXApiError?> BatchTagAsync(int tagId, IEnumerable<string> openids, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 批量为用户取消标签
         /// </summary>
         /// <param name="tagId">标签编号</param>
         /// <param name="openids">粉丝编号</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>结果</returns>
-        Task<WXApiError?> BatchUntagAsync(int tagId, IEnumerable<string> openids);
+        Task<WXApiError?> BatchUntagAsync(int tagId, IEnumerable<string> openids, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 创建标签
         /// </summary>
         /// <param name="name">标签名</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>操作结果</returns>
-        Task<HttpClientResult<WXCreateTagResult, WXApiError>> CreateTagAsync(string name);
+        Task<HttpClientResult<WXCreateTagResult, WXApiError>> CreateTagAsync(string name, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 删除标签
         /// </summary>
         /// <param name="id">标签编号</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>操作结果</returns>
-        Task<WXApiError?> DeleteTagAsync(long id);
+        Task<WXApiError?> DeleteTagAsync(long id, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 获取标签列表
         /// </summary>
         /// <param name="saveStream">Save stream</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Task</returns>
-        Task GetTagListAsync(Stream saveStream);
+        Task GetTagListAsync(Stream saveStream, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 获取所有用户
         /// </summary>
         /// <param name="nextOpenId">拉取列表的最后一个用户的OPENID，为空标识从头开始</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>结果</returns>
-        Task<HttpClientResult<WXUserListResult, WXApiError>> GetUserListAsync(string? nextOpenId);
+        Task<HttpClientResult<WXUserListResult, WXApiError>> GetUserListAsync(string? nextOpenId, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 获取用户身上的标签列表
         /// </summary>
         /// <param name="openid">编号</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>结果</returns>
-        Task<HttpClientResult<GetUserTagResult, WXApiError>> GetUserTagAsync(string openid);
+        Task<HttpClientResult<GetUserTagResult, WXApiError>> GetUserTagAsync(string openid, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 获取标签下的所有用户
         /// </summary>
         /// <param name="tagId">标签编号</param>
         /// <param name="nextOpenId">拉取列表的最后一个用户的OPENID，为空标识从头开始</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>结果</returns>
-        Task<HttpClientResult<WXUserListResult, WXApiError>> GetTagUserListAsync(int tagId, string? nextOpenId);
+        Task<HttpClientResult<WXUserListResult, WXApiError>> GetTagUserListAsync(int tagId, string? nextOpenId, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 编辑标签
         /// </summary>
         /// <param name="id">编号</param>
         /// <param name="name">新标签名</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>操作结果</returns>
-        Task<WXApiError?> UpdateTagAsync(long id, string name);
+        Task<WXApiError?> UpdateTagAsync(long id, string name, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// 上传媒体文件
+        /// </summary>
+        /// <param name="fileName">文件名，如 file.png</param>
+        /// <param name="bytes">字节数组</param>
+        /// <param name="type">类型</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Result</returns>
+        Task<HttpClientResult<WXUploadMediaResult, WXApiError>> UploadMediaAsync(string fileName, byte[] bytes, WXMediaType? type = null, CancellationToken cancellationToken = default);
     }
 }

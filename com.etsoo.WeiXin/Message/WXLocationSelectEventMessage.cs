@@ -1,4 +1,5 @@
 ﻿using com.etsoo.Utils;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
 
 namespace com.etsoo.WeiXin.Message
@@ -23,12 +24,12 @@ namespace com.etsoo.WeiXin.Message
         /// <summary>
         /// 地图缩放大小
         /// </summary>
-        public int Scale { get; init; }
+        public required int Scale { get; init; }
 
         /// <summary>
         /// 地理位置信息
         /// </summary>
-        public string Label { get; init; } = null!;
+        public required string Label { get; init; }
 
         /// <summary>
         /// 朋友圈 POI 的名字，可能为空
@@ -50,12 +51,12 @@ namespace com.etsoo.WeiXin.Message
         /// <summary>
         /// 事件 KEY 值，与自定义菜单接口中 KEY 值对应
         /// </summary>
-        public string EventKey { get; init; } = null!;
+        public required string EventKey { get; init; }
 
         /// <summary>
         /// 发送的位置信息
         /// </summary>
-        public WXLocationInfo SendLocationInfo { get; init; } = null!;
+        public required WXLocationInfo SendLocationInfo { get; init; }
 
         /// <summary>
         /// 构造函数
@@ -69,22 +70,20 @@ namespace com.etsoo.WeiXin.Message
         /// 构造函数
         /// </summary>
         /// <param name="dic">字典数据</param>
+        [SetsRequiredMembers]
         public WXLocationSelectEventMessage(Dictionary<string, string> dic) : base(dic)
         {
-            if (dic is not null)
-            {
-                EventKey = dic["EventKey"];
+            EventKey = dic["EventKey"];
 
-                var info = XmlUtils.ParseXml(SharedUtils.GetStream($"<xml>{dic["SendLocationInfo"]}</xml>"));
-                SendLocationInfo = new WXLocationInfo
-                {
-                    LocationX = XmlUtils.GetValue<decimal>(info, "Location_X").GetValueOrDefault(),
-                    LocationY = XmlUtils.GetValue<decimal>(info, "Location_Y").GetValueOrDefault(),
-                    Scale = XmlUtils.GetValue<int>(info, "Scale").GetValueOrDefault(),
-                    Label = info["Label"],
-                    Poiname = XmlUtils.GetValue(info, "Poiname")
-                };
-            }
+            var info = XmlUtils.ParseXml(SharedUtils.GetStream($"<xml>{dic["SendLocationInfo"]}</xml>"));
+            SendLocationInfo = new WXLocationInfo
+            {
+                LocationX = XmlUtils.GetValue<decimal>(info, "Location_X").GetValueOrDefault(),
+                LocationY = XmlUtils.GetValue<decimal>(info, "Location_Y").GetValueOrDefault(),
+                Scale = XmlUtils.GetValue<int>(info, "Scale").GetValueOrDefault(),
+                Label = info["Label"],
+                Poiname = XmlUtils.GetValue(info, "Poiname")
+            };
         }
     }
 }

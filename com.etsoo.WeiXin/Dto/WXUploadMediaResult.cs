@@ -6,22 +6,22 @@ namespace com.etsoo.WeiXin.Dto
     /// WeiXin upload media file result
     /// 微信上传媒体文件结果
     /// </summary>
-    public class WXUploadMediaResult
+    public record WXUploadMediaResult
     {
         /// <summary>
         /// 媒体文件类型
         /// </summary>
-        [JsonConverter(typeof(JsonStringEnumConverter))]
-        public WXMediaType Type { get; init; }
+        [JsonConverter(typeof(JsonStringEnumConverter<WXMediaType>))]
+        public required WXMediaType Type { get; init; }
 
         /// <summary>
         /// 媒体文件标识
         /// </summary>
-        public string MediaId { get; init; } = null!;
+        public required string MediaId { get; init; }
 
         /// <summary>
         /// 上传时间戳
         /// </summary>
-        public long CreatedAt { get; init; }
+        public required long CreatedAt { get; init; }
     }
 }

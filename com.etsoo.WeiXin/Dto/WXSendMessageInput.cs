@@ -20,12 +20,12 @@
         /// <summary>
         /// 接收者（用户）的 openid
         /// </summary>
-        public string Touser { get; init; } = null!;
+        public required string Touser { get; init; }
 
         /// <summary>
         /// 所需下发的订阅模板id
         /// </summary>
-        public string TemplateId { get; init; } = null!;
+        public required string TemplateId { get; init; }
 
         /// <summary>
         /// 订阅消息跳转网页时填写
@@ -45,6 +45,6 @@
         /// <summary>
         /// 模板内容
         /// </summary>
-        public Dictionary<string, WXSendMessageDataItem> Data { get; init; } = null!;
+        public required Dictionary<string, WXSendMessageDataItem> Data { get; init; }
     }
 }

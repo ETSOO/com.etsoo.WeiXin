@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Xml.Serialization;
 
 namespace com.etsoo.WeiXin.Message
 {
@@ -16,12 +17,12 @@ namespace com.etsoo.WeiXin.Message
         /// <summary>
         /// 事件 KEY 值，跳转的小程序路径
         /// </summary>
-        public string EventKey { get; init; } = null!;
+        public required string EventKey { get; init; }
 
         /// <summary>
         /// 菜单ID，如果是个性化菜单，则可以通过这个字段，知道是哪个规则的菜单被点击了
         /// </summary>
-        public string MenuId { get; init; } = null!;
+        public required string MenuId { get; init; }
 
         /// <summary>
         /// 构造函数
@@ -35,13 +36,11 @@ namespace com.etsoo.WeiXin.Message
         /// 构造函数
         /// </summary>
         /// <param name="dic">字典数据</param>
+        [SetsRequiredMembers]
         public WXViewMiniprogramEventMessage(Dictionary<string, string> dic) : base(dic)
         {
-            if (dic is not null)
-            {
-                EventKey = dic["EventKey"];
-                MenuId = dic["MenuId"];
-            }
+            EventKey = dic["EventKey"];
+            MenuId = dic["MenuId"];
         }
     }
 }

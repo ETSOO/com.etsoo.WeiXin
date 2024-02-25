@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Xml.Serialization;
 
 namespace com.etsoo.WeiXin.Message
 {
@@ -16,12 +17,12 @@ namespace com.etsoo.WeiXin.Message
         /// <summary>
         /// 小视频消息媒体id，可以调用获取临时素材接口拉取数据
         /// </summary>
-        public string MediaId { get; init; } = null!;
+        public required string MediaId { get; init; }
 
         /// <summary>
         /// 视频消息缩略图的媒体id，可以调用获取临时素材接口拉取数据
         /// </summary>
-        public string ThumbMediaId { get; init; } = null!;
+        public required string ThumbMediaId { get; init; }
 
         /// <summary>
         /// 构造函数
@@ -34,13 +35,11 @@ namespace com.etsoo.WeiXin.Message
         /// 构造函数
         /// </summary>
         /// <param name="dic">字典数据</param>
+        [SetsRequiredMembers]
         public WXShortVideoMessage(Dictionary<string, string> dic) : base(dic)
         {
-            if (dic is not null)
-            {
-                ThumbMediaId = dic["ThumbMediaId"];
-                MediaId = dic["MediaId"];
-            }
+            ThumbMediaId = dic["ThumbMediaId"];
+            MediaId = dic["MediaId"];
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using com.etsoo.Utils;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
 
 namespace com.etsoo.WeiXin.Message
@@ -12,12 +13,12 @@ namespace com.etsoo.WeiXin.Message
         /// <summary>
         /// 模板 id
         /// </summary>
-        public string TemplateId { get; init; } = null!;
+        public required string TemplateId { get; init; }
 
         /// <summary>
         /// 用户点击行为（同意/accept、取消/reject 发送通知）
         /// </summary>
-        public string SubscribeStatusString { get; init; } = null!;
+        public required string SubscribeStatusString { get; init; }
 
         /// <summary>
         /// 场景，1 = 弹窗来自 H5 页面, 2 = 弹窗来自图文消息
@@ -39,7 +40,7 @@ namespace com.etsoo.WeiXin.Message
         /// <summary>
         /// 细节
         /// </summary>
-        public WXSubscribeMsgPopupEventItem[] SubscribeMsgPopupEvent { get; init; } = null!;
+        public required WXSubscribeMsgPopupEventItem[] SubscribeMsgPopupEvent { get; init; }
 
         /// <summary>
         /// 构造函数
@@ -53,17 +54,15 @@ namespace com.etsoo.WeiXin.Message
         /// 构造函数
         /// </summary>
         /// <param name="dic">字典数据</param>
+        [SetsRequiredMembers]
         public WXSubscribePopupEventMessage(Dictionary<string, string> dic) : base(dic)
         {
-            if (dic is not null)
+            SubscribeMsgPopupEvent = XmlUtils.GetList(dic["SubscribeMsgPopupEvent"]).Select(item => new WXSubscribeMsgPopupEventItem
             {
-                SubscribeMsgPopupEvent = XmlUtils.GetList(dic["SubscribeMsgPopupEvent"]).Select(item => new WXSubscribeMsgPopupEventItem
-                {
-                    TemplateId = item["TemplateId"],
-                    SubscribeStatusString = item["SubscribeStatusString"],
-                    PopupScene = XmlUtils.GetValue<int>(item, "PopupScene").GetValueOrDefault()
-                }).ToArray();
-            }
+                TemplateId = item["TemplateId"],
+                SubscribeStatusString = item["SubscribeStatusString"],
+                PopupScene = XmlUtils.GetValue<int>(item, "PopupScene").GetValueOrDefault()
+            }).ToArray();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Xml.Serialization;
 
 namespace com.etsoo.WeiXin.Message
 {
@@ -16,17 +17,17 @@ namespace com.etsoo.WeiXin.Message
         /// <summary>
         /// 消息标题
         /// </summary>
-        public string Title { get; init; } = null!;
+        public required string Title { get; init; }
 
         /// <summary>
         /// 消息描述
         /// </summary>
-        public string Description { get; init; } = null!;
+        public required string Description { get; init; }
 
         /// <summary>
         /// 消息链接
         /// </summary>
-        public string Url { get; init; } = null!;
+        public required string Url { get; init; }
 
         /// <summary>
         /// 构造函数
@@ -39,14 +40,12 @@ namespace com.etsoo.WeiXin.Message
         /// 构造函数
         /// </summary>
         /// <param name="dic">字典数据</param>
+        [SetsRequiredMembers]
         public WXLinkMessage(Dictionary<string, string> dic) : base(dic)
         {
-            if (dic is not null)
-            {
-                Title = dic["Title"];
-                Description = dic["Description"];
-                Url = dic["Url"];
-            }
+            Title = dic["Title"];
+            Description = dic["Description"];
+            Url = dic["Url"];
         }
     }
 }

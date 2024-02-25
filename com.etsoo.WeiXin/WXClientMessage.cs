@@ -45,7 +45,7 @@ namespace com.etsoo.WeiXin
         public async Task<(WXMessage?, Dictionary<string, string>)> ParseMessageAsync(Stream input, WXMessageCallbackInput rq)
         {
             // 验证签名，确定是否来自微信
-            if (await CheckSignatureAsync(rq) is false) return (null, new Dictionary<string, string>());
+            if (await CheckSignatureAsync(rq) is false) return (null, []);
 
             // 第一层数据
             var dic = await XmlUtils.ParseXmlAsync(input);
@@ -97,47 +97,55 @@ namespace com.etsoo.WeiXin
             var msgType = XmlUtils.GetValue<WXMessageType>(dic, "MsgType");
             if (msgType is not null)
             {
+                WXMessage? message;
+
                 // 是否为事件
                 if (msgType == WXMessageType.@event)
                 {
                     var eventType = XmlUtils.GetValue<WXEventType>(dic, "Event");
                     if (eventType is null) return ParseMessageError(dic, "No key event data");
 
-                    return eventType switch
+                    message = eventType switch
                     {
-                        WXEventType.subscribe => (new WXSubscribeEventMessage(dic), dic),
-                        WXEventType.unsubscribe => (new WXUnsubscribeEventMessage(dic), dic),
-                        WXEventType.SCAN => (new WXScanEventMessage(dic), dic),
-                        WXEventType.LOCATION => (new WXLocationEventMessage(dic), dic),
-                        WXEventType.CLICK => (new WXClickEventMessage(dic), dic),
-                        WXEventType.VIEW => (new WXViewEventMessage(dic), dic),
-                        WXEventType.scancode_push => (new WXScanCodeEventMessage(dic), dic),
-                        WXEventType.scancode_waitmsg => (new WXScanCodeWaitEventMessage(dic), dic),
-                        WXEventType.pic_sysphoto => (new WXSysPhotoEventMessage(dic), dic),
-                        WXEventType.pic_photo_or_album => (new WXAlbumPhotoEventMessage(dic), dic),
-                        WXEventType.pic_weixin => (new WXWeiXinPhotoEventMessage(dic), dic),
-                        WXEventType.location_select => (new WXLocationSelectEventMessage(dic), dic),
-                        WXEventType.view_miniprogram => (new WXViewMiniprogramEventMessage(dic), dic),
-                        WXEventType.TEMPLATESENDJOBFINISH => (new WXTemplateSendEventMessage(dic), dic),
-                        WXEventType.subscribe_msg_popup_event => (new WXSubscribePopupEventMessage(dic), dic),
-                        WXEventType.subscribe_msg_change_event => (new WXSubscribeManageEventMessage(dic), dic),
-                        WXEventType.subscribe_msg_sent_event => (new WXSubscribeSendEventMessage(dic), dic),
-                        _ => ParseMessageError(dic, "Event type not covered")
+                        WXEventType.subscribe => new WXSubscribeEventMessage(dic),
+                        WXEventType.unsubscribe => new WXUnsubscribeEventMessage(dic),
+                        WXEventType.SCAN => new WXScanEventMessage(dic),
+                        WXEventType.LOCATION => new WXLocationEventMessage(dic),
+                        WXEventType.CLICK => new WXClickEventMessage(dic),
+                        WXEventType.VIEW => new WXViewEventMessage(dic),
+                        WXEventType.scancode_push => new WXScanCodeEventMessage(dic),
+                        WXEventType.scancode_waitmsg => new WXScanCodeWaitEventMessage(dic),
+                        WXEventType.pic_sysphoto => new WXSysPhotoEventMessage(dic),
+                        WXEventType.pic_photo_or_album => new WXAlbumPhotoEventMessage(dic),
+                        WXEventType.pic_weixin => new WXWeiXinPhotoEventMessage(dic),
+                        WXEventType.location_select => new WXLocationSelectEventMessage(dic),
+                        WXEventType.view_miniprogram => new WXViewMiniprogramEventMessage(dic),
+                        WXEventType.TEMPLATESENDJOBFINISH => new WXTemplateSendEventMessage(dic),
+                        WXEventType.subscribe_msg_popup_event => new WXSubscribePopupEventMessage(dic),
+                        WXEventType.subscribe_msg_change_event => new WXSubscribeManageEventMessage(dic),
+                        WXEventType.subscribe_msg_sent_event => new WXSubscribeSendEventMessage(dic),
+                        _ => null
                     };
+
+                    if (message == null) return ParseMessageError(dic, "Event type not covered");
                 }
                 else
                 {
-                    return msgType switch
+                    message = msgType switch
                     {
-                        WXMessageType.text => (new WXTextMessage(dic), dic),
-                        WXMessageType.image => (new WXImageMessage(dic), dic),
-                        WXMessageType.voice => (new WXVoiceMessage(dic), dic),
-                        WXMessageType.shortvideo => (new WXShortVideoMessage(dic), dic),
-                        WXMessageType.location => (new WXLocationMessage(dic), dic),
-                        WXMessageType.link => (new WXLinkMessage(dic), dic),
-                        _ => ParseMessageError(dic, "MsgType not covered")
+                        WXMessageType.text => new WXTextMessage(dic),
+                        WXMessageType.image => new WXImageMessage(dic),
+                        WXMessageType.voice => new WXVoiceMessage(dic),
+                        WXMessageType.shortvideo => new WXShortVideoMessage(dic),
+                        WXMessageType.location => new WXLocationMessage(dic),
+                        WXMessageType.link => new WXLinkMessage(dic),
+                        _ => null
                     };
+
+                    if (message == null) return ParseMessageError(dic, "MsgType not covered");
                 }
+
+                return (message, dic);
             }
 
             return ParseMessageError(dic, "No MsgType field or not identified");

@@ -9,55 +9,63 @@ namespace com.etsoo.WeiXinService
     public record EventAlertDto
     {
         string host = default!;
-        [Required]
         [StringLength(128)]
-        public string Host
+        public required string Host
         {
             get => host;
             init => host = value.ToMaxLength(128);
         }
 
-        [Required, MinLength(1), MaxLength(10)]
-        public string[] Tokens { get; init; } = default!;
+        string[] tokens = default!;
+        public required string[] Tokens
+        {
+            get => tokens;
+            set
+            {
+                if (value.Length is >= 1 and <= 10)
+                {
+                    tokens = value;
+                }
+                else
+                {
+                    throw new ArgumentOutOfRangeException(nameof(Tokens), "The length of tokens should be between 1 and 10.");
+                }
+            }
+        }
 
         string description = default!;
-        [Required]
         [StringLength(512)]
-        public string Description
+        public required string Description
         {
             get => description;
             init => description = value.ToMaxLength(512);
         }
 
         string id = default!;
-        [Required]
         [StringLength(30)]
-        public string Id
+        public required string Id
         {
             get => id;
             init => id = value.ToMaxLength(30);
         }
 
         string status = default!;
-        [Required]
         [StringLength(30)]
-        public string Status
+        public required string Status
         {
             get => status;
             init => status = value.ToMaxLength(30);
         }
 
         string remark = default!;
-        [Required]
         [StringLength(256)]
-        public string Remark
+        public required string Remark
         {
             get => remark;
             init => remark = value.ToMaxLength(256);
         }
 
         string? url;
-        [Required]
         [StringLength(256)]
         public string? Url
         {
@@ -65,7 +73,6 @@ namespace com.etsoo.WeiXinService
             init => url = value?.ToMaxLength(256);
         }
 
-        [Required]
-        public DateTimeOffset Datetime { get; init; } = default!;
+        public required DateTimeOffset Datetime { get; init; }
     }
 }

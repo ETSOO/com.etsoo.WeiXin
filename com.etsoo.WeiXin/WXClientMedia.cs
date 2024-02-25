@@ -15,12 +15,13 @@ namespace com.etsoo.WeiXin
         /// </summary>
         /// <param name="mediaId">Media id</param>
         /// <param name="saveStream">Save stream</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Task</returns>
-        public async Task<string> DownloadMediaAsync(string mediaId, Stream saveStream)
+        public async Task<string> DownloadMediaAsync(string mediaId, Stream saveStream, CancellationToken cancellationToken = default)
         {
-            var accessToken = await GetAcessTokenAsync();
+            var accessToken = await GetAcessTokenAsync(cancellationToken);
             var api = $"{ApiUri}media/get?access_token={accessToken}&media_id={mediaId}";
-            return await DownloadAsync(api, saveStream);
+            return await DownloadAsync(api, saveStream, cancellationToken);
         }
 
         /// <summary>
@@ -29,8 +30,9 @@ namespace com.etsoo.WeiXin
         /// <param name="fileName">文件名，如 file.png</param>
         /// <param name="bytes">字节数组</param>
         /// <param name="type">类型</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Result</returns>
-        public async Task<HttpClientResult<WXUploadMediaResult, WXApiError>> UploadMediaAsync(string fileName, byte[] bytes, WXMediaType? type = null)
+        public async Task<HttpClientResult<WXUploadMediaResult, WXApiError>> UploadMediaAsync(string fileName, byte[] bytes, WXMediaType? type = null, CancellationToken cancellationToken = default)
         {
             if (type == null)
             {
@@ -47,7 +49,7 @@ namespace com.etsoo.WeiXin
                 };
             }
 
-            var accessToken = await GetAcessTokenAsync();
+            var accessToken = await GetAcessTokenAsync(cancellationToken);
             var api = $"{ApiUri}media/upload?access_token={accessToken}&type={type}";
 
             using var content = new MultipartFormDataContent();
@@ -69,7 +71,10 @@ namespace com.etsoo.WeiXin
             if (boundary is not null)
                 boundary.Value = boundary.Value?.Replace("\"", string.Empty);
 
-            return await PostAsync<WXUploadMediaResult, WXApiError>(api, content, "media_id");
+            return await PostAsync(api, content, "media_id",
+                WeiXinJsonSerializerContext.Default.WXUploadMediaResult,
+                WeiXinJsonSerializerContext.Default.WXApiError,
+                cancellationToken);
         }
     }
 }

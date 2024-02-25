@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace com.etsoo.WeiXin.RQ
+﻿namespace com.etsoo.WeiXin.RQ
 {
     /// <summary>
     /// Create WeiXin JS siganture request data
@@ -12,7 +10,6 @@ namespace com.etsoo.WeiXin.RQ
         /// Signed Uri
         /// 签名地址
         /// </summary>
-        [Required]
-        public string Url { get; set; } = null!;
+        public required string Url { get; set; }
     }
 }

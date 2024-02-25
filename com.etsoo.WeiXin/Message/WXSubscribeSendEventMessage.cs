@@ -1,4 +1,5 @@
 ﻿using com.etsoo.Utils;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
 
 namespace com.etsoo.WeiXin.Message
@@ -12,22 +13,22 @@ namespace com.etsoo.WeiXin.Message
         /// <summary>
         /// 模板 id
         /// </summary>
-        public string TemplateId { get; init; } = null!;
+        public required string TemplateId { get; init; }
 
         /// <summary>
         /// 消息 id
         /// </summary>
-        public string MsgID { get; init; } = null!;
+        public required string MsgID { get; init; }
 
         /// <summary>
         /// 推送结果状态码（0表示成功）
         /// </summary>
-        public int ErrorCode { get; init; }
+        public required int ErrorCode { get; init; }
 
         /// <summary>
         /// 推送结果状态码文字含义
         /// </summary>
-        public string ErrorStatus { get; init; } = null!;
+        public required string ErrorStatus { get; init; }
     }
 
     /// <summary>
@@ -44,7 +45,7 @@ namespace com.etsoo.WeiXin.Message
         /// <summary>
         /// 细节
         /// </summary>
-        public WXSubscribeSendEventItem[] SubscribeMsgSentEvent { get; init; } = null!;
+        public required WXSubscribeSendEventItem[] SubscribeMsgSentEvent { get; init; }
 
         /// <summary>
         /// 构造函数
@@ -58,18 +59,16 @@ namespace com.etsoo.WeiXin.Message
         /// 构造函数
         /// </summary>
         /// <param name="dic">字典数据</param>
+        [SetsRequiredMembers]
         public WXSubscribeSendEventMessage(Dictionary<string, string> dic) : base(dic)
         {
-            if (dic is not null)
+            SubscribeMsgSentEvent = XmlUtils.GetList(dic["SubscribeMsgSentEvent"]).Select(item => new WXSubscribeSendEventItem
             {
-                SubscribeMsgSentEvent = XmlUtils.GetList(dic["SubscribeMsgSentEvent"]).Select(item => new WXSubscribeSendEventItem
-                {
-                    TemplateId = item["TemplateId"],
-                    MsgID = item["MsgID"],
-                    ErrorCode = XmlUtils.GetValue<int>(item, "ErrorCode").GetValueOrDefault(),
-                    ErrorStatus = item["ErrorStatus"]
-                }).ToArray();
-            }
+                TemplateId = item["TemplateId"],
+                MsgID = item["MsgID"],
+                ErrorCode = XmlUtils.GetValue<int>(item, "ErrorCode").GetValueOrDefault(),
+                ErrorStatus = item["ErrorStatus"]
+            }).ToArray();
         }
     }
 }

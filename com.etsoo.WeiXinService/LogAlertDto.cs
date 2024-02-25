@@ -9,54 +9,62 @@ namespace com.etsoo.WeiXinService
     public record LogAlertDto
     {
         string host = default!;
-        [Required]
         [StringLength(128)]
-        public string Host
+        public required string Host
         {
             get => host;
             init => host = value.ToMaxLength(128);
         }
 
-        [Required, MinLength(1), MaxLength(10)]
-        public string[] Tokens { get; init; } = default!;
+        string[] tokens = default!;
+        public required string[] Tokens
+        {
+            get => tokens;
+            set
+            {
+                if (value.Length is >= 1 and <= 10)
+                {
+                    tokens = value;
+                }
+                else
+                {
+                    throw new ArgumentOutOfRangeException(nameof(Tokens), "The length of tokens should be between 1 and 10.");
+                }
+            }
+        }
 
         string service = default!;
-        [Required]
         [StringLength(30)]
-        public string Service
+        public required string Service
         {
             get => service;
             init => service = value.ToMaxLength(30);
         }
 
         string id = default!;
-        [Required]
         [StringLength(30)]
-        public string Id
+        public required string Id
         {
             get => id;
             init => id = value.ToMaxLength(30);
         }
 
         string level = default!;
-        [Required]
         [StringLength(20)]
-        public string Level
+        public required string Level
         {
             get => level;
             init => level = value.ToMaxLength(20);
         }
 
         string message = default!;
-        [Required]
         [StringLength(512)]
-        public string Message
+        public required string Message
         {
             get => message;
             init => message = value.ToMaxLength(512);
         }
 
-        [Required]
-        public DateTimeOffset Datetime { get; init; } = default!;
+        public required DateTimeOffset Datetime { get; init; }
     }
 }

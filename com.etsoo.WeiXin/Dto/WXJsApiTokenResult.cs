@@ -6,7 +6,7 @@ namespace com.etsoo.WeiXin.Dto
     /// Weixin get Js api ticket result
     /// 微信获取Js接口调用凭证结果
     /// </summary>
-    public class WXJsApiTokenResult : WXApiError
+    public record WXJsApiTokenResult : WXApiError
     {
         /// <summary>
         /// Ticket

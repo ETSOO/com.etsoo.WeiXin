@@ -4,30 +4,30 @@
     /// Weixin get Js api signature result
     /// 微信获取Js接口调用签名结果
     /// </summary>
-    public class WXJsApiSignatureResult
+    public record WXJsApiSignatureResult
     {
         /// <summary>
         /// App id
         /// 程序编号
         /// </summary>
-        public string AppId { get; init; } = null!;
+        public required string AppId { get; init; }
 
         /// <summary>
         /// Nonce string
         /// 随机字符串
         /// </summary>
-        public string NonceStr { get; init; } = null!;
+        public required string NonceStr { get; init; }
 
         /// <summary>
         /// Timestamp
         /// 时间戳
         /// </summary>
-        public string Timestamp { get; init; } = null!;
+        public required string Timestamp { get; init; }
 
         /// <summary>
         /// Signature
         /// 签名
         /// </summary>
-        public string Signature { get; init; } = null!;
+        public required string Signature { get; init; }
     }
 }

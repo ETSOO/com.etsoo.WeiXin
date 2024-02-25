@@ -1,4 +1,5 @@
 ﻿using com.etsoo.Utils;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
 
 namespace com.etsoo.WeiXin.Message
@@ -25,12 +26,12 @@ namespace com.etsoo.WeiXin.Message
         /// <summary>
         /// 发送的图片数量
         /// </summary>
-        public int Count { get; init; }
+        public required int Count { get; init; }
 
         /// <summary>
         /// 图片列表
         /// </summary>
-        public WXSendPicsInfoItem[] PicList { get; init; } = null!;
+        public required WXSendPicsInfoItem[] PicList { get; init; }
     }
 
     /// <summary>
@@ -42,7 +43,7 @@ namespace com.etsoo.WeiXin.Message
         /// <summary>
         /// 图片的MD5值，开发者若需要，可用于验证接收到图片
         /// </summary>
-        public string PicMd5Sum { get; init; } = null!;
+        public required string PicMd5Sum { get; init; }
     }
 
     /// <summary>
@@ -59,12 +60,12 @@ namespace com.etsoo.WeiXin.Message
         /// <summary>
         /// 事件 KEY 值，与自定义菜单接口中 KEY 值对应
         /// </summary>
-        public string EventKey { get; init; } = null!;
+        public required string EventKey { get; init; }
 
         /// <summary>
         /// 发送的图片信息
         /// </summary>
-        public WXSendPicsInfo SendPicsInfo { get; init; } = null!;
+        public required WXSendPicsInfo SendPicsInfo { get; init; }
 
         /// <summary>
         /// 构造函数
@@ -78,13 +79,11 @@ namespace com.etsoo.WeiXin.Message
         /// 构造函数
         /// </summary>
         /// <param name="dic">字典数据</param>
+        [SetsRequiredMembers]
         public WXSysPhotoEventMessage(Dictionary<string, string> dic) : base(dic)
         {
-            if (dic is not null)
-            {
-                EventKey = dic["EventKey"];
-                SendPicsInfo = WXSendPicsInfo.Create(dic);
-            }
+            EventKey = dic["EventKey"];
+            SendPicsInfo = WXSendPicsInfo.Create(dic);
         }
     }
 }

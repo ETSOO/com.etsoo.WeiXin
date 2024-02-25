@@ -1,4 +1,6 @@
-﻿namespace com.etsoo.WeiXin.Message
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace com.etsoo.WeiXin.Message
 {
     /// <summary>
     /// 事件类型
@@ -109,8 +111,16 @@
         /// <summary>
         /// 构造函数
         /// </summary>
+        public WXEventMessage() : base()
+        {
+        }
+
+        /// <summary>
+        /// 构造函数
+        /// </summary>
         /// <param name="dic">字典数据</param>
-        public WXEventMessage(Dictionary<string, string>? dic = null) : base(dic)
+        [SetsRequiredMembers]
+        public WXEventMessage(Dictionary<string, string> dic) : base(dic)
         {
         }
     }

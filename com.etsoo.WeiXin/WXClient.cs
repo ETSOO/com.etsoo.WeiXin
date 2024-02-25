@@ -6,8 +6,6 @@ using com.etsoo.WeiXin.Dto;
 using com.etsoo.WeiXin.Message;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace com.etsoo.WeiXin
 {
@@ -56,14 +54,6 @@ namespace com.etsoo.WeiXin
         /// </summary>
         private static string? JsApiCardTicket;
         private static DateTime? JsApiCardTicketExpired;
-
-        // Json序列号特例选项
-        private static readonly JsonSerializerOptions JsonOutOptions = new()
-        {
-            WriteIndented = false,
-            PropertyNamingPolicy = new JsonSnakeNamingPolicy(),
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-        };
 
         /// <summary>
         /// App id
@@ -245,14 +235,18 @@ namespace com.etsoo.WeiXin
         /// Get Access Token
         /// 获取访问凭据
         /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Result</returns>
         /// <exception cref="WXClientException"></exception>
-        public async ValueTask<string> GetAcessTokenAsync()
+        public async ValueTask<string> GetAcessTokenAsync(CancellationToken cancellationToken = default)
         {
             if (AccessToken == null || AccessTokenExpired == null || AccessTokenExpired.Value <= DateTime.Now)
             {
                 var api = $"{ApiUri}token?grant_type=client_credential&appid={AppId}&secret={appSecret}";
-                var result = await GetAsync<WXAccessTokenResult, WXApiError>(api, "access_token");
+                var result = await GetAsync(api, "access_token",
+                    WeiXinJsonSerializerContext.Default.WXAccessTokenResult,
+                    WeiXinJsonSerializerContext.Default.WXApiError,
+                    cancellationToken);
                 if (result.Success)
                 {
                     AccessToken = result.Data.AccessToken;
@@ -272,22 +266,18 @@ namespace com.etsoo.WeiXin
         /// Get Js API ticket
         /// 获取脚本接口凭证
         /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Result</returns>
         /// <exception cref="NullReferenceException"></exception>
         /// <exception cref="WXClientException"></exception>
-        public async ValueTask<string> GetJsApiTicketAsync()
+        public async ValueTask<string> GetJsApiTicketAsync(CancellationToken cancellationToken = default)
         {
             if (JsApiTicket == null || JsApiTicketExpired == null || JsApiTicketExpired.Value <= DateTime.Now)
             {
-                var accessToken = await GetAcessTokenAsync();
+                var accessToken = await GetAcessTokenAsync(cancellationToken);
                 var api = $"{ApiUri}ticket/getticket?access_token={accessToken}&type=jsapi";
 
-                var result = await GetAsync<WXJsApiTokenResult>(api);
-                if (result == null)
-                {
-                    throw new NullReferenceException();
-                }
-
+                var result = await GetAsync(api, WeiXinJsonSerializerContext.Default.WXJsApiTokenResult, cancellationToken) ?? throw new NullReferenceException();
                 if (result.Ticket != null)
                 {
                     JsApiTicket = result.Ticket;
@@ -307,22 +297,18 @@ namespace com.etsoo.WeiXin
         /// Get Js API Card ticket
         /// 获取脚本卡券接口凭证
         /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Result</returns>
         /// <exception cref="NullReferenceException"></exception>
         /// <exception cref="WXClientException"></exception>
-        public async ValueTask<string> GetJsApiCardTicketAsync()
+        public async ValueTask<string> GetJsApiCardTicketAsync(CancellationToken cancellationToken = default)
         {
             if (JsApiCardTicket == null || JsApiCardTicketExpired == null || JsApiCardTicketExpired.Value <= DateTime.Now)
             {
-                var accessToken = await GetAcessTokenAsync();
+                var accessToken = await GetAcessTokenAsync(cancellationToken);
                 var api = $"{ApiUri}ticket/getticket?access_token={accessToken}&type=wx_card";
 
-                var result = await GetAsync<WXJsApiTokenResult>(api);
-                if (result == null)
-                {
-                    throw new NullReferenceException();
-                }
-
+                var result = await GetAsync(api, WeiXinJsonSerializerContext.Default.WXJsApiTokenResult, cancellationToken) ?? throw new NullReferenceException();
                 if (result.Ticket != null)
                 {
                     JsApiCardTicket = result.Ticket;

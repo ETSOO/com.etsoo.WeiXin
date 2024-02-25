@@ -31,13 +31,14 @@ namespace com.etsoo.WeiXin
         /// </summary>
         /// <param name="tagId">标签编号</param>
         /// <param name="openids">粉丝编号</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>结果</returns>
-        public async Task<WXApiError?> BatchTagAsync(int tagId, IEnumerable<string> openids)
+        public async Task<WXApiError?> BatchTagAsync(int tagId, IEnumerable<string> openids, CancellationToken cancellationToken = default)
         {
-            var accessToken = await GetAcessTokenAsync();
+            var accessToken = await GetAcessTokenAsync(cancellationToken);
             var api = $"{ApiUri}tags/members/batchtagging?access_token={accessToken}";
-            var response = await Client.PostAsync(api, CreateBatchTagContent(tagId, openids));
-            return await ResponseToAsync<WXApiError>(response);
+            var response = await Client.PostAsync(api, CreateBatchTagContent(tagId, openids), cancellationToken);
+            return await ResponseToAsync(response, WeiXinJsonSerializerContext.Default.WXApiError, cancellationToken);
         }
 
         /// <summary>
@@ -45,23 +46,25 @@ namespace com.etsoo.WeiXin
         /// </summary>
         /// <param name="tagId">标签编号</param>
         /// <param name="openids">粉丝编号</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>结果</returns>
-        public async Task<WXApiError?> BatchUntagAsync(int tagId, IEnumerable<string> openids)
+        public async Task<WXApiError?> BatchUntagAsync(int tagId, IEnumerable<string> openids, CancellationToken cancellationToken = default)
         {
-            var accessToken = await GetAcessTokenAsync();
+            var accessToken = await GetAcessTokenAsync(cancellationToken);
             var api = $"{ApiUri}tags/members/batchuntagging?access_token={accessToken}";
-            var response = await Client.PostAsync(api, CreateBatchTagContent(tagId, openids));
-            return await ResponseToAsync<WXApiError>(response);
+            var response = await Client.PostAsync(api, CreateBatchTagContent(tagId, openids), cancellationToken);
+            return await ResponseToAsync(response, WeiXinJsonSerializerContext.Default.WXApiError, cancellationToken);
         }
 
         /// <summary>
         /// 创建标签
         /// </summary>
         /// <param name="name">标签名</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>操作结果</returns>
-        public async Task<HttpClientResult<WXCreateTagResult, WXApiError>> CreateTagAsync(string name)
+        public async Task<HttpClientResult<WXCreateTagResult, WXApiError>> CreateTagAsync(string name, CancellationToken cancellationToken = default)
         {
-            var accessToken = await GetAcessTokenAsync();
+            var accessToken = await GetAcessTokenAsync(cancellationToken);
             var api = $"{ApiUri}tags/create?access_token={accessToken}";
             var json = StringUtils.WriteJson((writer) =>
             {
@@ -70,17 +73,21 @@ namespace com.etsoo.WeiXin
                 writer.WriteString("name", name);
                 writer.WriteEndObject();
             });
-            return await PostAsync<WXCreateTagResult, WXApiError>(api, CreateJsonStringContent(json), "tag");
+            return await PostAsync(api, CreateJsonStringContent(json), "tag",
+                WeiXinJsonSerializerContext.Default.WXCreateTagResult,
+                WeiXinJsonSerializerContext.Default.WXApiError,
+                cancellationToken);
         }
 
         /// <summary>
         /// 删除标签
         /// </summary>
         /// <param name="id">标签编号</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>操作结果</returns>
-        public async Task<WXApiError?> DeleteTagAsync(long id)
+        public async Task<WXApiError?> DeleteTagAsync(long id, CancellationToken cancellationToken = default)
         {
-            var accessToken = await GetAcessTokenAsync();
+            var accessToken = await GetAcessTokenAsync(cancellationToken);
             var api = $"{ApiUri}tags/delete?access_token={accessToken}";
             var json = StringUtils.WriteJson((writer) =>
             {
@@ -89,49 +96,58 @@ namespace com.etsoo.WeiXin
                 writer.WriteNumber("id", id);
                 writer.WriteEndObject();
             });
-            var response = await Client.PostAsync(api, CreateJsonStringContent(json));
-            return await ResponseToAsync<WXApiError>(response);
+            var response = await Client.PostAsync(api, CreateJsonStringContent(json), cancellationToken);
+            return await ResponseToAsync(response, WeiXinJsonSerializerContext.Default.WXApiError, cancellationToken);
         }
 
         /// <summary>
         /// 获取标签列表
         /// </summary>
         /// <param name="saveStream">Save stream</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Task</returns>
-        public async Task GetTagListAsync(Stream saveStream)
+        public async Task GetTagListAsync(Stream saveStream, CancellationToken cancellationToken = default)
         {
-            var accessToken = await GetAcessTokenAsync();
+            var accessToken = await GetAcessTokenAsync(cancellationToken);
             var api = $"{ApiUri}tags/get?access_token={accessToken}";
-            await GetAsync(api, saveStream);
+            await GetAsync(api, saveStream, cancellationToken);
         }
 
         /// <summary>
         /// 获取所有用户
         /// </summary>
         /// <param name="nextOpenId">拉取列表的最后一个用户的OPENID，为空标识从头开始</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>结果</returns>
-        public async Task<HttpClientResult<WXUserListResult, WXApiError>> GetUserListAsync(string? nextOpenId)
+        public async Task<HttpClientResult<WXUserListResult, WXApiError>> GetUserListAsync(string? nextOpenId, CancellationToken cancellationToken = default)
         {
-            var accessToken = await GetAcessTokenAsync();
+            var accessToken = await GetAcessTokenAsync(cancellationToken);
             var api = $"{ApiUri}user/get?access_token={accessToken}";
             if (!string.IsNullOrEmpty(nextOpenId)) api += $"&next_openid={nextOpenId}";
-            return await GetAsync<WXUserListResult, WXApiError>(api, "count");
+            return await GetAsync(api, "count",
+                WeiXinJsonSerializerContext.Default.WXUserListResult,
+                WeiXinJsonSerializerContext.Default.WXApiError,
+                cancellationToken);
         }
 
         /// <summary>
         /// 获取用户身上的标签列表
         /// </summary>
         /// <param name="openid">编号</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>结果</returns>
-        public async Task<HttpClientResult<GetUserTagResult, WXApiError>> GetUserTagAsync(string openid)
+        public async Task<HttpClientResult<GetUserTagResult, WXApiError>> GetUserTagAsync(string openid, CancellationToken cancellationToken = default)
         {
-            var accessToken = await GetAcessTokenAsync();
+            var accessToken = await GetAcessTokenAsync(cancellationToken);
             var api = $"{ApiUri}tags/getidlist?access_token={accessToken}";
             var json = StringUtils.WriteJson((writer) =>
             {
                 writer.WriteString("openid", openid);
             });
-            return await PostAsync<GetUserTagResult, WXApiError>(api, CreateJsonStringContent(json), "tagid_list");
+            return await PostAsync(api, CreateJsonStringContent(json), "tagid_list",
+                WeiXinJsonSerializerContext.Default.GetUserTagResult,
+                WeiXinJsonSerializerContext.Default.WXApiError,
+                cancellationToken);
         }
 
         /// <summary>
@@ -139,17 +155,21 @@ namespace com.etsoo.WeiXin
         /// </summary>
         /// <param name="tagId">标签编号</param>
         /// <param name="nextOpenId">拉取列表的最后一个用户的OPENID，为空标识从头开始</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>结果</returns>
-        public async Task<HttpClientResult<WXUserListResult, WXApiError>> GetTagUserListAsync(int tagId, string? nextOpenId)
+        public async Task<HttpClientResult<WXUserListResult, WXApiError>> GetTagUserListAsync(int tagId, string? nextOpenId, CancellationToken cancellationToken = default)
         {
-            var accessToken = await GetAcessTokenAsync();
+            var accessToken = await GetAcessTokenAsync(cancellationToken);
             var api = $"{ApiUri}user/tag/get?access_token={accessToken}";
             var json = StringUtils.WriteJson((writer) =>
             {
                 writer.WriteNumber("tagid", tagId);
                 if (!string.IsNullOrEmpty(nextOpenId)) writer.WriteString("next_openid", nextOpenId);
             });
-            return await PostAsync<WXUserListResult, WXApiError>(api, CreateJsonStringContent(json), "count");
+            return await PostAsync(api, CreateJsonStringContent(json), "count",
+                WeiXinJsonSerializerContext.Default.WXUserListResult,
+                WeiXinJsonSerializerContext.Default.WXApiError,
+                cancellationToken);
         }
 
         /// <summary>
@@ -157,10 +177,11 @@ namespace com.etsoo.WeiXin
         /// </summary>
         /// <param name="id">编号</param>
         /// <param name="name">新标签名</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>操作结果</returns>
-        public async Task<WXApiError?> UpdateTagAsync(long id, string name)
+        public async Task<WXApiError?> UpdateTagAsync(long id, string name, CancellationToken cancellationToken = default)
         {
-            var accessToken = await GetAcessTokenAsync();
+            var accessToken = await GetAcessTokenAsync(cancellationToken);
             var api = $"{ApiUri}tags/update?access_token={accessToken}";
             var json = StringUtils.WriteJson((writer) =>
             {
@@ -170,8 +191,8 @@ namespace com.etsoo.WeiXin
                 writer.WriteString("name", name);
                 writer.WriteEndObject();
             });
-            var response = await Client.PostAsync(api, CreateJsonStringContent(json));
-            return await ResponseToAsync<WXApiError>(response);
+            var response = await Client.PostAsync(api, CreateJsonStringContent(json), cancellationToken);
+            return await ResponseToAsync(response, WeiXinJsonSerializerContext.Default.WXApiError, cancellationToken);
         }
     }
 }
