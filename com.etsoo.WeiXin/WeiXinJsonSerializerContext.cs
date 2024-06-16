@@ -10,10 +10,12 @@ namespace com.etsoo.WeiXin
     [JsonSourceGenerationOptions(
         PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
         DictionaryKeyPolicy = JsonKnownNamingPolicy.CamelCase,
-        PropertyNameCaseInsensitive = true
+        PropertyNameCaseInsensitive = true,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     )]
     [JsonSerializable(typeof(WXAccessTokenResult))]
     [JsonSerializable(typeof(WXApiError))]
+    [JsonSerializable(typeof(WXCheckSignatureInput))]
     [JsonSerializable(typeof(WXCreateTagResult))]
     [JsonSerializable(typeof(WXSendMessageInput))]
     [JsonSerializable(typeof(WXUploadMediaResult))]

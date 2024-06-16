@@ -24,9 +24,10 @@ namespace com.etsoo.WeiXin
 
         /// <summary>
         /// Api base uri
+        /// https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Interface_field_description.html
         /// 接口基本地址
         /// </summary>
-        public const string ApiUri = "https://api.weixin.qq.com/cgi-bin/";
+        public string ApiUri { get; init; } = "https://api.weixin.qq.com/cgi-bin/";
 
         /// <summary>
         /// The globally unique interface calling credentials of the official account
@@ -76,22 +77,17 @@ namespace com.etsoo.WeiXin
         /// </summary>
         /// <param name="client">Client</param>
         /// <param name="options">Options</param>
-        /// <param name="secureManager">Secure manager</param>
-        public WXClient(HttpClient client, WXClientOptions options, Func<string, string, string>? secureManager = null) : base(client)
+        public WXClient(HttpClient client, WXClientOptions options) : base(client)
         {
-            if (secureManager == null)
+            AppId = options.AppId;
+            appSecret = options.AppSecret;
+            token = options.Token;
+            aesKey = options.EncodingAESKey;
+
+            if (!string.IsNullOrEmpty(options.ApiUri))
             {
-                AppId = options.AppId;
-                appSecret = options.AppSecret;
-                token = options.Token;
-                aesKey = options.EncodingAESKey;
-            }
-            else
-            {
-                AppId = CryptographyUtils.UnsealData("AppId", options.AppId, secureManager);
-                appSecret = CryptographyUtils.UnsealData("AppSecret", options.AppSecret, secureManager);
-                token = CryptographyUtils.UnsealData("Token", options.Token, secureManager);
-                aesKey = CryptographyUtils.UnsealData("EncodingAESKey", options.EncodingAESKey, secureManager);
+                // Override default API URI
+                ApiUri = options.ApiUri;
             }
 
             Options.PropertyNamingPolicy = new JsonSnakeNamingPolicy();
@@ -102,11 +98,10 @@ namespace com.etsoo.WeiXin
         /// 构造函数
         /// </summary>
         /// <param name="client">Client</param>
-        /// <param name="section">Configuration section</param>
-        /// <param name="secureManager">Secure manager</param>
+        /// <param name="options">Options</param>
         [ActivatorUtilitiesConstructor]
-        public WXClient(HttpClient client, IOptions<WXClientOptions> options, Func<string, string, string>? secureManager = null)
-            : this(client, options.Value, secureManager)
+        public WXClient(HttpClient client, IOptions<WXClientOptions> options)
+            : this(client, options.Value)
         {
         }
 
@@ -137,10 +132,16 @@ namespace com.etsoo.WeiXin
         /// <returns>Result</returns>
         public async Task<string> CreateSignatureAsync(string timestamp, string nonce)
         {
+            if (string.IsNullOrEmpty(token))
+            {
+                // Token is required
+                throw new Exception("Token is required");
+            }
+
             // Source
             var data = new[]
             {
-                token!,
+                token,
                 timestamp,
                 nonce
             };
