@@ -7,8 +7,8 @@ namespace com.etsoo.WeiXin.Auth
     /// JSON 序列化器上下文
     /// </summary>
     [JsonSourceGenerationOptions(
-        PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
-        DictionaryKeyPolicy = JsonKnownNamingPolicy.CamelCase,
+        PropertyNamingPolicy = JsonKnownNamingPolicy.SnakeCaseLower,
+        DictionaryKeyPolicy = JsonKnownNamingPolicy.SnakeCaseLower,
         PropertyNameCaseInsensitive = true,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     )]
