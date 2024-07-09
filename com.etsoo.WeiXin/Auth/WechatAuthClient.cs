@@ -143,9 +143,21 @@ namespace com.etsoo.WeiXin.Auth
         /// <param name="request">Callback request</param>
         /// <param name="state">Request state</param>
         /// <returns>Action result & user information</returns>
-        public async ValueTask<(IActionResult result, AuthUserInfo? userInfo)> GetUserInfoAsync(HttpRequest request, string state)
+        public ValueTask<(IActionResult result, AuthUserInfo? userInfo)> GetUserInfoAsync(HttpRequest request, string state)
         {
-            var (result, tokenData) = await ValidateAuthAsync(request, state);
+            return GetUserInfoAsync(request, s => s == state);
+        }
+
+        /// <summary>
+        /// Get user info from callback request
+        /// 从回调请求获取用户信息
+        /// </summary>
+        /// <param name="request">Callback request</param>
+        /// <param name="stateCallback">Callback to verify request state</param>
+        /// <returns>Action result & user information</returns>
+        public async ValueTask<(IActionResult result, AuthUserInfo? userInfo)> GetUserInfoAsync(HttpRequest request, Func<string, bool> stateCallback)
+        {
+            var (result, tokenData) = await ValidateAuthAsync(request, stateCallback);
             AuthUserInfo? userInfo = null;
             if (result.Ok && tokenData != null)
             {
@@ -177,9 +189,9 @@ namespace com.etsoo.WeiXin.Auth
         /// 验证认证回调
         /// </summary>
         /// <param name="request">Callback request</param>
-        /// <param name="state">State</param>
+        /// <param name="stateCallback">Callback to verify request state</param>
         /// <returns>Action result & Token data</returns>
-        public async Task<(IActionResult result, WechatTokenData? tokenData)> ValidateAuthAsync(HttpRequest request, string state)
+        public async Task<(IActionResult result, WechatTokenData? tokenData)> ValidateAuthAsync(HttpRequest request, Func<string, bool> stateCallback)
         {
             IActionResult result;
             WechatTokenData? tokenData = null;
@@ -195,7 +207,7 @@ namespace com.etsoo.WeiXin.Auth
             else if (request.Query.TryGetValue("state", out var actualState) && request.Query.TryGetValue("code", out var codeSource))
             {
                 var code = codeSource.ToString();
-                if (!actualState.Equals(state))
+                if (!stateCallback(actualState.ToString()))
                 {
                     result = new ActionResult
                     {
