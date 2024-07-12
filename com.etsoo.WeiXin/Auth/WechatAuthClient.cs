@@ -121,15 +121,16 @@ namespace com.etsoo.WeiXin.Auth
         /// </summary>
         /// <param name="action">Request action</param>
         /// <param name="code">Authorization code</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Token data</returns>
-        public async ValueTask<WechatTokenData?> CreateTokenAsync(string action, string code)
+        public async ValueTask<WechatTokenData?> CreateTokenAsync(string action, string code, CancellationToken cancellationToken = default)
         {
             var api = $"{_gateway}/sns/oauth2/access_token?appid={_options.AppId}&secret={_options.AppSecret}&code={code}&grant_type=authorization_code";
-            var response = await _client.GetAsync(api);
+            var response = await _client.GetAsync(api, cancellationToken);
 
             response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadFromJsonAsync(WechatAuthJsonSerializerContext.Default.WechatTokenData);
+            return await response.Content.ReadFromJsonAsync(WechatAuthJsonSerializerContext.Default.WechatTokenData, cancellationToken);
         }
 
         /// <summary>
@@ -137,15 +138,16 @@ namespace com.etsoo.WeiXin.Auth
         /// 用刷新令牌获取访问令牌
         /// </summary>
         /// <param name="refreshToken">Refresh token</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Result</returns>
-        public async Task<WechatTokenData?> RefreshTokenAsync(string refreshToken)
+        public async Task<WechatTokenData?> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken = default)
         {
             var api = $"{_gateway}/sns/oauth2/refresh_token?appid={_options.AppId}&grant_type=refresh_token&refresh_token={refreshToken}";
-            var response = await _client.GetAsync(api);
+            var response = await _client.GetAsync(api, cancellationToken);
 
             response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadFromJsonAsync(WechatAuthJsonSerializerContext.Default.WechatTokenData);
+            return await response.Content.ReadFromJsonAsync(WechatAuthJsonSerializerContext.Default.WechatTokenData, cancellationToken);
         }
 
         /// <summary>
@@ -153,15 +155,16 @@ namespace com.etsoo.WeiXin.Auth
         /// 获取用户信息
         /// </summary>
         /// <param name="tokenData">Token data</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Result</returns>
-        public async ValueTask<WechatUserInfo?> GetUserInfoAsync(WechatTokenData tokenData)
+        public async ValueTask<WechatUserInfo?> GetUserInfoAsync(WechatTokenData tokenData, CancellationToken cancellationToken = default)
         {
             var api = $"{_gateway}/sns/userinfo?access_token={tokenData.AccessToken}&openid={tokenData.OpenId}";
-            var response = await _client.GetAsync(api);
+            var response = await _client.GetAsync(api, cancellationToken);
 
             response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadFromJsonAsync(WechatAuthJsonSerializerContext.Default.WechatUserInfo);
+            return await response.Content.ReadFromJsonAsync(WechatAuthJsonSerializerContext.Default.WechatUserInfo, cancellationToken);
         }
 
         /// <summary>
@@ -171,10 +174,11 @@ namespace com.etsoo.WeiXin.Auth
         /// <param name="request">Callback request</param>
         /// <param name="state">Request state</param>
         /// <param name="action">Request action</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Action result & user information</returns>
-        public ValueTask<(IActionResult result, AuthUserInfo? userInfo)> GetUserInfoAsync(HttpRequest request, string state, string? action = null)
+        public ValueTask<(IActionResult result, AuthUserInfo? userInfo)> GetUserInfoAsync(HttpRequest request, string state, string? action = null, CancellationToken cancellationToken = default)
         {
-            return GetUserInfoAsync(request, s => s == state, action);
+            return GetUserInfoAsync(request, s => s == state, action, cancellationToken);
         }
 
         /// <summary>
@@ -184,14 +188,15 @@ namespace com.etsoo.WeiXin.Auth
         /// <param name="request">Callback request</param>
         /// <param name="stateCallback">Callback to verify request state</param>
         /// <param name="action">Request action</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Action result & user information</returns>
-        public async ValueTask<(IActionResult result, AuthUserInfo? userInfo)> GetUserInfoAsync(HttpRequest request, Func<string, bool> stateCallback, string? action = null)
+        public async ValueTask<(IActionResult result, AuthUserInfo? userInfo)> GetUserInfoAsync(HttpRequest request, Func<string, bool> stateCallback, string? action = null, CancellationToken cancellationToken = default)
         {
-            var (result, tokenData) = await ValidateAuthAsync(request, stateCallback, action);
+            var (result, tokenData) = await ValidateAuthAsync(request, stateCallback, action, cancellationToken);
             AuthUserInfo? userInfo = null;
             if (result.Ok && tokenData != null)
             {
-                var data = await GetUserInfoAsync(tokenData);
+                var data = await GetUserInfoAsync(tokenData, cancellationToken);
                 if (data == null)
                 {
                     result = new ActionResult
@@ -221,8 +226,9 @@ namespace com.etsoo.WeiXin.Auth
         /// <param name="request">Callback request</param>
         /// <param name="stateCallback">Callback to verify request state</param>
         /// <param name="action">Request action</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Action result & Token data</returns>
-        public async Task<(IActionResult result, WechatTokenData? tokenData)> ValidateAuthAsync(HttpRequest request, Func<string, bool> stateCallback, string? action = null)
+        public async Task<(IActionResult result, WechatTokenData? tokenData)> ValidateAuthAsync(HttpRequest request, Func<string, bool> stateCallback, string? action = null, CancellationToken cancellationToken = default)
         {
             IActionResult result;
             WechatTokenData? tokenData = null;
@@ -259,7 +265,7 @@ namespace com.etsoo.WeiXin.Auth
                     try
                     {
                         action ??= request.GetRequestAction();
-                        tokenData = await CreateTokenAsync(action, code);
+                        tokenData = await CreateTokenAsync(action, code, cancellationToken);
                         if (tokenData == null)
                         {
                             result = new ActionResult
