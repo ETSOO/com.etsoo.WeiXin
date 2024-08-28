@@ -175,8 +175,8 @@ namespace com.etsoo.WeiXin.Auth
         /// <param name="state">Request state</param>
         /// <param name="action">Request action</param>
         /// <param name="cancellationToken">Cancellation token</param>
-        /// <returns>Action result & user information</returns>
-        public ValueTask<(IActionResult result, AuthUserInfo? userInfo)> GetUserInfoAsync(HttpRequest request, string state, string? action = null, CancellationToken cancellationToken = default)
+        /// <returns>Action result & user information & actual state</returns>
+        public ValueTask<(IActionResult result, AuthUserInfo? userInfo, string? state)> GetUserInfoAsync(HttpRequest request, string state, string? action = null, CancellationToken cancellationToken = default)
         {
             return GetUserInfoAsync(request, s => s == state, action, cancellationToken);
         }
@@ -189,10 +189,10 @@ namespace com.etsoo.WeiXin.Auth
         /// <param name="stateCallback">Callback to verify request state</param>
         /// <param name="action">Request action</param>
         /// <param name="cancellationToken">Cancellation token</param>
-        /// <returns>Action result & user information</returns>
-        public async ValueTask<(IActionResult result, AuthUserInfo? userInfo)> GetUserInfoAsync(HttpRequest request, Func<string, bool> stateCallback, string? action = null, CancellationToken cancellationToken = default)
+        /// <returns>Action result & user information & actual state</returns>
+        public async ValueTask<(IActionResult result, AuthUserInfo? userInfo, string? state)> GetUserInfoAsync(HttpRequest request, Func<string, bool> stateCallback, string? action = null, CancellationToken cancellationToken = default)
         {
-            var (result, tokenData) = await ValidateAuthAsync(request, stateCallback, action, cancellationToken);
+            var (result, tokenData, state) = await ValidateAuthAsync(request, stateCallback, action, cancellationToken);
             AuthUserInfo? userInfo = null;
             if (result.Ok && tokenData != null)
             {
@@ -216,7 +216,7 @@ namespace com.etsoo.WeiXin.Auth
                 }
             }
 
-            return (result, userInfo);
+            return (result, userInfo, state);
         }
 
         /// <summary>
@@ -227,11 +227,12 @@ namespace com.etsoo.WeiXin.Auth
         /// <param name="stateCallback">Callback to verify request state</param>
         /// <param name="action">Request action</param>
         /// <param name="cancellationToken">Cancellation token</param>
-        /// <returns>Action result & Token data</returns>
-        public async Task<(IActionResult result, WechatTokenData? tokenData)> ValidateAuthAsync(HttpRequest request, Func<string, bool> stateCallback, string? action = null, CancellationToken cancellationToken = default)
+        /// <returns>Action result & Token data & actual state</returns>
+        public async Task<(IActionResult result, WechatTokenData? tokenData, string? state)> ValidateAuthAsync(HttpRequest request, Func<string, bool> stateCallback, string? action = null, CancellationToken cancellationToken = default)
         {
             IActionResult result;
             WechatTokenData? tokenData = null;
+            string? state = null;
 
             if (request.Query.TryGetValue("error", out var error))
             {
@@ -243,8 +244,9 @@ namespace com.etsoo.WeiXin.Auth
             }
             else if (request.Query.TryGetValue("state", out var actualState) && request.Query.TryGetValue("code", out var codeSource))
             {
+                state = actualState.ToString();
                 var code = codeSource.ToString();
-                if (!stateCallback(actualState.ToString()))
+                if (!stateCallback(state))
                 {
                     result = new ActionResult
                     {
@@ -296,7 +298,7 @@ namespace com.etsoo.WeiXin.Auth
                 };
             }
 
-            return (result, tokenData);
+            return (result, tokenData, state);
         }
     }
 }
