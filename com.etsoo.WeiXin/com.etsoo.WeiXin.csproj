@@ -1,17 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\etsoo.snk</AssemblyOriginatorKeyFile>
-    <Version>1.0.40</Version>
-    <Authors>ETSOO SmartERP NextGen Team</Authors>
+    <Version>1.0.41</Version>
+    <Authors>ETSOO</Authors>
     <Company>ETSOO / 亿速思维</Company>
     <Description>WeChat server-side APIs support
 微信服务器端接口支持</Description>
-    <Copyright>Copyright © ETSOO 2004 - 2024</Copyright>
+    <Copyright>Copyright © ETSOO 2004 - 2026</Copyright>
     <PackageProjectUrl>https://www.etsoo.com/SmartERP/</PackageProjectUrl>
     <PackageIcon>logo.png</PackageIcon>
     <RepositoryUrl>https://github.com/ETSOO/com.etsoo.WeiXin</RepositoryUrl>
@@ -33,8 +33,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="com.etsoo.ApiModel" Version="1.0.67" />
-    <PackageReference Include="com.etsoo.HTTP" Version="1.0.58" />
+    <PackageReference Include="com.etsoo.ApiModel" Version="1.0.83" />
+    <PackageReference Include="com.etsoo.HTTP" Version="1.0.94" />
   </ItemGroup>
 
 </Project>
